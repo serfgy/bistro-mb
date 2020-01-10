@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import constants from '../constants/constants';
-// import Icon, { AntDesign, Feather } from 'react-web-vector-icons';
+import Icon, { AntDesign, Feather } from 'react-web-vector-icons';
 
 class OverlayMenu extends Component {
   constructor(props) {
@@ -13,32 +13,66 @@ class OverlayMenu extends Component {
   componentDidMount() {
   }
 
+  doQtyChange(type) {
+    if (type === 'PLUS') {
+      this.setState((prevState, props) => ({
+        modalInputValueQty: Math.floor(Number(prevState.modalInputValueQty) + 1)
+      }));
+    }
+    else if (type === 'MINUS') {
+      if (this.state.modalInputValueQty <= 1) return;
+      this.setState((prevState, props) => ({
+        modalInputValueQty: Math.ceil(Number(prevState.modalInputValueQty) - 1)
+      }));
+    }
+  }
+
   render() {
     const { selectedMenu } = this.props;
-    const imageArray = [
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqNdtXK-n6cTgV4yGng1ZwVWPXnjdFesMNxflpYCg-sq5ZTUVA&s',
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxr371J0hm5MzBU-_bFxnhy2PkOZ7p9wtHyQwHoMpvE6Wqc6m5-w&s',
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-rah58B_evIlY83P2-c-mtXyceUbUu-GHvSuVxHI9xKMh5tbtw&s',
-      ''
-    ];
+    const { modalInputValueQty } = this.state;
 
     return (
-      <div style={styles.overlay}
-        onClick={() => this.props.handleUpdateFromOverlayMenu()}>
-        <div style={styles.overlayContent}
-          onClick={() => this.props.handleUpdateFromOverlayMenu(1)}>
+      <div style={styles.overlay} className="disable-double-tap">
+        <div style={styles.overlayContent}>
           <div style={styles.imageContainer}>
             <img style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
           </div>
-        </div>
-      </div>
+          <div style={styles.subtitle}>${selectedMenu.listPrice}</div>
+          <div style={styles.title}>{selectedMenu.menuName}</div>
+          <div style={styles.quantityContainer}>
+            <div style={styles.quantityFirst} className="disable-select"
+              onClick={() => this.doQtyChange('MINUS')}>
+              <AntDesign name='minus' size={32} color={constants.paid} />
+            </div>
+            <div style={styles.quantitySecond}>
+              {modalInputValueQty}
+            </div>
+            <div style={styles.quantityThird} className="disable-select"
+              onClick={() => this.doQtyChange('PLUS')}>
+              <AntDesign name='plus' size={32} color={constants.paid} />
+            </div>
+          </div>
+          <div style={styles.actionContainer}>
+            <div style={styles.action}
+              onClick={() => this.props.handleUpdateFromOverlayMenu()}>
+              <AntDesign name='closecircleo' size={48} color={constants.paid} />
+              <div style={styles.actionText}>BACK</div>
+            </div>
+            <div style={styles.action}
+              onClick={() => this.props.handleUpdateFromOverlayMenu(modalInputValueQty)}>
+              <AntDesign name='checkcircleo' size={48} color={constants.grey4} />
+              <div style={styles.actionText}>OK</div>
+            </div>
+          </div>
+        </div >
+      </div >
     );
   }
 }
 
 const styles = ({
   overlay: {
-    backgroundColor: 'rgba(0,0,0,0.9)',
+    backgroundColor: 'rgba(255,255,255,0.9)',
     position: 'absolute',
     zIndex: 2,
     top: 0,
@@ -50,24 +84,29 @@ const styles = ({
     justifyContent: 'center',
   },
   overlayContent: {
-    width: 250,
-    height: 400,
-    backgroundColor: constants.grey2,
-    borderTopLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    width: '100%',
+    height: '100%',
+    // backgroundColor: 'white',
+    // borderTopLeftRadius: 20,
+    // borderBottomRightRadius: 20,
     overflow: 'hidden',
     position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   imageContainer: {
-    width: 250,
-    height: 250,
+    width: 160,
+    height: 160,
     position: 'relative',
     zIndex: 1,
     overflow: 'hidden',
-    borderBottomLeftRadius: '80px/2px',
+    borderRadius: 10,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 40,
   },
   image: {
     height: '100%',
@@ -79,7 +118,66 @@ const styles = ({
     left: '-9999px',
     right: '-9999px',
     margin: 'auto',
-    filter: 'brightness(60%) contrast(200%)',
+  },
+  title: {
+    paddingHorizontal: 20,
+    textAlign: 'center',
+    fontFamily: 'nunitosans-regular',
+    fontSize: 24,
+  },
+  subtitle: {
+    fontFamily: 'nunitosans-regular',
+    fontSize: 16,
+  },
+  actionContainer: {
+    marginTop: 40,
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  action: {
+    height: 100,
+    width: 100,
+    margin: 20,
+    // backgroundColor: 'blue',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionText: {
+    fontFamily: 'nunitosans-regular',
+    fontSize: 10,
+  },
+  quantityContainer: {
+    height: 80,
+    width: 300,
+    // backgroundColor: 'orange',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantityFirst: {
+    flex: 1,
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantitySecond: {
+    flex: 1,
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontFamily: 'nunitosans-bold',
+    fontSize: 48,
+  },
+  quantityThird: {
+    flex: 1,
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

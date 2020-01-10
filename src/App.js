@@ -15,16 +15,10 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/menu">
-          {/* <Menu /> */}
-        </Route>
-        <Route path="/order">
-          <Order />
-        </Route>
-        <Route path="/">
-          {/* <Register /> */}
-          <Menu />
-        </Route>
+        <Route path="/menu" component={Menu} />
+        <Route path="/order" component={Order} />
+        {/* <Route path="/" component={Menu} /> */}
+        <Route path='/register/:tableId' component={Register} />
       </Switch>
     </Router>
   );
