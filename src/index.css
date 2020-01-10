@@ -1,13 +1,98 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: nunitosans-semibold, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+html {
+  overflow: scroll;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+@font-face {
+  font-family: 'varela-round';
+  src: local('varela-round'), url(./components/fonts/VarelaRound-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'nunito-regular';
+  src: local('nunito-regular'), url(./components/fonts/Nunito-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'nunito-bold';
+  src: local('nunito-bold'), url(./components/fonts/Nunito-Bold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'nunito-semibold';
+  src: local('nunito-semibold'), url(./components/fonts/Nunito-SemiBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'nunito-light';
+  src: local('nunito-light'), url(./components/fonts/Nunito-Light.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'nunitosans-regular';
+  src: local('nunitosans-regular'), url(./components/fonts/NunitoSans-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'nunitosans-bold';
+  src: local('nunitosans-bold'), url(./components/fonts/NunitoSans-Bold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'nunitosans-semibold';
+  src: local('nunitosans-semibold'), url(./components/fonts/NunitoSans-SemiBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'nunitosans-light';
+  src: local('nunitosans-light'), url(./components/fonts/NunitoSans-Light.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: MaterialCommunityIcons;
+  font-style: normal;
+  font-weight: 400;
+  src: url(./components/fonts/MaterialCommunityIcons.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: Ionicons;
+  font-style: normal;
+  font-weight: 400;
+  src: url(./components/fonts/Ionicons.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: AntDesign;
+  font-style: normal;
+  font-weight: 400;
+  src: url(./components/fonts/AntDesign.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: Feather;
+  font-style: normal;
+  font-weight: 400;
+  src: url(./components/fonts/Feather.ttf) format('truetype')
+}
+
+@font-face {
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: 400;
+  src: url(./components/fonts/FontAwesome.ttf) format('truetype')
 }
