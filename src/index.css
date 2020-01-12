@@ -8,13 +8,24 @@ body {
   /* overflow: hidden; */
 }
 
-/* html {
-  overflow: hidden;
+input {
+  background: none;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* input:focus {
+  background: white;
+  border: none;
 } */
 
 ::-webkit-scrollbar {
   display: none;
 }
+
+input { outline: none; }
 
 .disable-select {
   -webkit-touch-callout: none; /* iOS Safari */
@@ -28,6 +39,33 @@ body {
 
 .disable-double-tap {
   touch-action: none;
+}
+
+.bg-dark {
+  background-color: #23272A;
+}
+
+.bg-paid {
+  background-color: #E84855;
+}
+
+.bg-grey {
+  background-color: #99aab5;
+}
+
+.text-light {
+  color: white;
+}
+
+.box-shadow {
+  box-shadow: 
+  0 0 30px 20px #fff, 
+  0 0 60px 10px rgba(232,72,85,0.5);
+}
+
+.background-transition {
+  transition-property: background-color;
+  transition-duration: 1s;
 }
 
 @font-face {

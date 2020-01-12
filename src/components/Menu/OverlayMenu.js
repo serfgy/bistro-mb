@@ -32,35 +32,35 @@ class OverlayMenu extends Component {
     const { modalInputValueQty } = this.state;
 
     return (
-      <div style={styles.overlay} className="disable-double-tap">
+      <div style={styles.overlay} className='disable-double-tap'>
         <div style={styles.overlayContent}>
-          <div style={styles.imageContainer}>
+          <div style={styles.imageContainer} className='box-shadow'>
             <img style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
           </div>
-          <div style={styles.subtitle}>${selectedMenu.listPrice}</div>
+          <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
           <div style={styles.title}>{selectedMenu.menuName}</div>
           <div style={styles.quantityContainer}>
             <div style={styles.quantityFirst} className="disable-select"
               onClick={() => this.doQtyChange('MINUS')}>
-              <AntDesign name='minus' size={32} color={constants.paid} />
+              <AntDesign name='minus' size={32} />
             </div>
             <div style={styles.quantitySecond}>
               {modalInputValueQty}
             </div>
-            <div style={styles.quantityThird} className="disable-select"
+            <div style={styles.quantityThird} className='disable-select'
               onClick={() => this.doQtyChange('PLUS')}>
-              <AntDesign name='plus' size={32} color={constants.paid} />
+              <AntDesign name='plus' size={32} />
             </div>
           </div>
           <div style={styles.actionContainer}>
             <div style={styles.action}
               onClick={() => this.props.handleUpdateFromOverlayMenu()}>
-              <AntDesign name='closecircleo' size={48} color={constants.paid} />
+              <AntDesign name='close' size={64} color={constants.paid} />
               <div style={styles.actionText}>BACK</div>
             </div>
             <div style={styles.action}
               onClick={() => this.props.handleUpdateFromOverlayMenu(modalInputValueQty)}>
-              <AntDesign name='checkcircleo' size={48} color={constants.grey4} />
+              <AntDesign name='check' size={64} color={constants.vacant} />
               <div style={styles.actionText}>OK</div>
             </div>
           </div>
@@ -72,7 +72,7 @@ class OverlayMenu extends Component {
 
 const styles = ({
   overlay: {
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: 'rgba(255,255,255,0.95)',
     position: 'absolute',
     zIndex: 2,
     top: 0,
@@ -97,8 +97,8 @@ const styles = ({
     alignItems: 'center',
   },
   imageContainer: {
-    width: 160,
-    height: 160,
+    width: 192,
+    height: 192,
     position: 'relative',
     zIndex: 1,
     overflow: 'hidden',
@@ -125,8 +125,8 @@ const styles = ({
     fontFamily: 'nunitosans-regular',
     fontSize: 24,
   },
-  subtitle: {
-    fontFamily: 'nunitosans-regular',
+  menuPrice: {
+    fontFamily: 'nunito-bold',
     fontSize: 16,
   },
   actionContainer: {
@@ -145,8 +145,9 @@ const styles = ({
     justifyContent: 'center',
   },
   actionText: {
-    fontFamily: 'nunitosans-regular',
-    fontSize: 10,
+    fontSize: 12,
+    letterSpacing: 2,
+    fontFamily: 'nunito-semibold',
   },
   quantityContainer: {
     height: 80,
@@ -169,7 +170,7 @@ const styles = ({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    fontFamily: 'nunitosans-bold',
+    fontFamily: 'nunitosans-semibold',
     fontSize: 48,
   },
   quantityThird: {

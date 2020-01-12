@@ -15,13 +15,13 @@ class Menu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      openorderInfo: props.location.state.openorderInfo,
       overlayMenuVisible: false,
       toOrder: false,
     };
   }
 
   componentDidMount() {
+    const { match } = this.props;
     fetch('https://dev.epbmobile.app:8090/fnb-ws/api/foldergrps?orgId=X02')
       .then(response => response.json())
       .then(response => {
@@ -38,7 +38,7 @@ class Menu extends Component {
       .then(response => {
         this.setState({ menus: response })
       });
-    fetch('https://dev.epbmobile.app:8090/fnb-ws/api/openorders/46161')
+    fetch('https://dev.epbmobile.app:8090/fnb-ws/api/openorders/' + match.params.openorderRecKey)
       .then(response => response.json())
       .then(response => {
         this.setState({ openorderInfo: response })
@@ -72,7 +72,7 @@ class Menu extends Component {
   }
 
   handleUpdateFromOverlayMenu = (item) => {
-    console.log('handled', item)
+    const { match } = this.props;
     const { selectedMenu } = this.state;
 
     this.setState({ overlayMenuVisible: false })
@@ -83,10 +83,10 @@ class Menu extends Component {
 
     let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/insert-openorder-item/';
     const body = {
-      openorderRecKey: '46161',
+      openorderRecKey: match.params.openorderRecKey,
       restmenuRecKey: selectedMenu.recKey,
       restmenuMod: '',
-      orderQty: 1,
+      orderQty: item,
       orderType: '',
     };
     fetch(url, {
@@ -116,14 +116,20 @@ class Menu extends Component {
     })
   }
 
+  doCalculateOrderedQty(item) {
+    const { openorderInfo } = this.state;
+    return openorderInfo.openorderItems.filter(el => el.stkId === item.stkId).reduce((a, b) => +a + +b.orderQty, 0);
+  }
+
   render() {
+    const { match } = this.props;
     const { openorderInfo, toOrder,
       foldergrps, displays, selectedFoldergrp, selectedMenu, overlayMenuVisible } = this.state;
     console.log('props', this.props);
 
     if (toOrder === true) {
       return <Redirect to={{
-        pathname: '/order',
+        pathname: '/order/' + match.params.openorderRecKey,
         // state: {
         //   openorderInfo: openorderInfo
         // }
@@ -153,19 +159,19 @@ class Menu extends Component {
           }
         </div>
         {
-          selectedFoldergrp &&
+          selectedFoldergrp && openorderInfo &&
           <div style={styles.rightContainer}>
             <div style={styles.headerContainer}
               onClick={() => this.doToOrder()}>
-              <div style={styles.header}>
+              <div style={styles.header} className='bg-dark'>
                 <div style={styles.headerFirst}>TABLE</div>
                 <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
               </div>
-              <div style={styles.header}>
+              <div style={styles.header} className={`background-transition ${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-dark'}`}>
                 <div style={styles.headerFirst}>ITEMS</div>
                 <div style={styles.headerSecond}>{openorderInfo.openorderItems.length}</div>
               </div>
-              <div style={styles.header}>
+              <div style={styles.header} className='bg-dark'>
                 <div style={styles.headerFirst}>TOTAL</div>
                 <div style={styles.headerSecond}>${openorderInfo.openorder.grandTotal.toFixed(0)}</div>
               </div>
@@ -174,7 +180,6 @@ class Menu extends Component {
               <div style={styles.subtitle}>{selectedFoldergrp.name}</div>
               <div style={styles.title}>{selectedFoldergrp.foldergrpId}</div>
               <div style={styles.subsubtitle}>• {displays.length} selections •</div>
-              <div style={{ marginTop: 50 }}></div>
             </div>
             <div style={styles.menus}>
               {
@@ -187,7 +192,7 @@ class Menu extends Component {
                       <div style={styles.menuPrice}>${item.listPrice}</div>
                       {
                         openorderInfo.openorderItems.find(el => el.stkId === item.stkId) &&
-                        <div style={styles.menuOrdered}>ORDERED</div>
+                        <div style={styles.menuOrdered}>ORDERED {this.doCalculateOrderedQty(item)}</div>
                       }
                     </div>
                     <div style={styles.menuRight}>
@@ -236,7 +241,6 @@ const styles = ({
     justifyContent: 'flex-end',
   },
   header: {
-    backgroundColor: constants.grey1,
     marginLeft: 10,
     width: 50,
     display: 'flex',
@@ -313,7 +317,7 @@ const styles = ({
   menus: {
     flex: 1,
     // backgroundColor: 'green',
-    margin: 10,
+    margin: '10px 10px 0px 10px',
     overflow: 'scroll',
   },
   menu: {
@@ -322,7 +326,10 @@ const styles = ({
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },
   menuLeft: {
-    flex: 1
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
   },
   menuRight: {
     width: 100,
@@ -339,7 +346,13 @@ const styles = ({
     fontFamily: 'varela-round',
     fontSize: 12,
     letterSpacing: 1,
-    color: constants.paid,
+    color: 'white',
+    backgroundColor: constants.reserved,
+    height: 20,
+    borderRadius: 10,
+    padding: '0px 5px 0px 5px',
+    display: 'flex',
+    alignItems: 'center',
   },
   menuImage: {
     height: '100%',

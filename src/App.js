@@ -15,8 +15,8 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/menu" component={Menu} />
-        <Route path="/order" component={Order} />
+        <Route path='/menu/:openorderRecKey' component={Menu} />
+        <Route path='/order/:openorderRecKey' component={Order} />
         {/* <Route path="/" component={Menu} /> */}
         <Route path='/register/:tableId' component={Register} />
       </Switch>
