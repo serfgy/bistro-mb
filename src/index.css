@@ -68,6 +68,15 @@ input { outline: none; }
   transition-duration: 1s;
 }
 
+.opacity-transition {
+  opacity: 0;
+  transition-duration: 0.5s;
+}
+
+.opacity-1{
+  opacity: 1;
+}
+
 @font-face {
   font-family: 'varela-round';
   src: local('varela-round'), url(./components/fonts/VarelaRound-Regular.ttf) format('truetype');

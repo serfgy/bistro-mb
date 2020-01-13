@@ -46,6 +46,10 @@ class Order extends Component {
       .then(response => response.json())
       .then(response => {
         console.log('post delete-openorder-item successful', response);
+        if (response.message) {
+          this.props.handleUpdateFromOrder(response.message)
+          return;
+        }
         this.setState({
           openorderInfo: response,
         })
@@ -78,6 +82,7 @@ class Order extends Component {
       .then(response => {
         console.log('post submit-openorder successful', response);
         if (response.message) {
+          this.props.handleUpdateFromOrder(response.message)
           return;
         }
         this.setState({

@@ -99,6 +99,10 @@ class Menu extends Component {
       .then(response => response.json())
       .then(response => {
         console.log('post insert-openorder-item successful', response);
+        if (response.message) {
+          this.props.handleUpdateFromMenu(response.message)
+          return;
+        }
         this.setState({
           openorderInfo: response,
           openorder: response.openorder,

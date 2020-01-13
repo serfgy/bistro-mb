@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,23 +9,70 @@ import './App.css';
 import Register from './components/Register/Register';
 import Menu from './components/Menu/Menu';
 import Order from './components/Order/Order';
+import Banner from './components/Banner/Banner';
 
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      bannerVisible: false,
+      bannerContent: '',
+    };
+  }
 
-function App() {
-  return (
-    <Router>
-      <Switch>
-        <Route path='/menu/:openorderRecKey' component={Menu} />
-        <Route path='/order/:openorderRecKey' component={Order} />
-        {/* <Route path="/" component={Menu} /> */}
-        <Route path='/register/:tableId' component={Register} />
-      </Switch>
-    </Router>
-  );
-}
+  componentDidMount() { }
 
-function Home() {
-  return <h2>Home</h2>;
+  handleUpdateFromRegister = () => {
+    console.log('app receive register')
+    this.setState({ bannerVisible: true })
+  }
+
+  handleUpdateFromMenu = (item) => {
+    console.log('app receive menu')
+    this.setState({ bannerVisible: true, bannerContent: item })
+  }
+
+  handleUpdateFromOrder = (item) => {
+    console.log('app receive order')
+    this.setState({ bannerVisible: true, bannerContent: item })
+  }
+
+  handleUpdateFromBanner = () => {
+    console.log('yep app receive order')
+    this.setState({ bannerVisible: false, bannerContent: '', })
+  }
+
+  render() {
+    const { bannerVisible, bannerContent } = this.state;
+
+    return (
+      <div>
+        {
+          bannerVisible &&
+          <Banner
+            content={bannerContent}
+            handleUpdateFromBanner={this.handleUpdateFromBanner} />
+        }
+        <Router>
+          <Switch>
+            <Route path='/register/:tableId'
+              render={(routeProps) => (
+                <Register {...routeProps} handleUpdateFromRegister={this.handleUpdateFromRegister} />
+              )} />
+            <Route path='/menu/:openorderRecKey'
+              render={(routeProps) => (
+                <Menu {...routeProps} handleUpdateFromMenu={this.handleUpdateFromMenu} />
+              )} />
+            <Route path='/order/:openorderRecKey'
+              render={(routeProps) => (
+                <Order {...routeProps} handleUpdateFromOrder={this.handleUpdateFromOrder} />
+              )} />
+          </Switch>
+        </Router>
+      </div>
+    );
+  }
+
 }
 
 export default App;
