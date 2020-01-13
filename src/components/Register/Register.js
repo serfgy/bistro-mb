@@ -13,26 +13,63 @@ class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      ready: false,
       toMenu: false,
+      toMenuKey: '',
       tableId: props.match.params.tableId,
       pax: 2,
-      name: 'Guest1',
+      name: '',
     };
   }
 
   componentDidMount() {
+    this.doVerifyOpenorder();
+  }
 
+  doVerifyOpenorder() {
+    const { tableId } = this.state;
+    let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/verify-openorder';
+    const body = {
+      shopId: 'X0201',
+      tableId: tableId,
+    };
+    console.log('body', body);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify(body),
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.log('post verify-openorder successful', response);
+        if (response.openorderRecKey) {
+          this.setState({
+            toMenuKey: response.openorderRecKey,
+            toMenu: true,
+          })
+        }
+        else {
+          this.setState({ ready: true })
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   doCreateOpenorder() {
-    const { tableId, pax } = this.state;
+    const { tableId, pax, name } = this.state;
     let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/create-openorder';
     const body = {
       shopId: 'X0201',
       tableId: tableId,
       pax: pax,
+      vipName: name,
       phone: '',
     };
+    console.log('body', body);
     fetch(url, {
       method: 'POST',
       headers: {
@@ -48,6 +85,7 @@ class Register extends Component {
         }
         this.setState({
           openorderInfo: response,
+          toMenuKey: response.openorder.recKey,
           toMenu: true,
         })
       })
@@ -57,65 +95,71 @@ class Register extends Component {
   }
 
   render() {
-    const { pax, name, tableId, toMenu, openorderInfo, } = this.state;
+    const { ready, pax, name, toMenu, toMenuKey, } = this.state;
     console.log('here register');
 
-    if (toMenu === true) {
+    if (toMenu) {
       return <Redirect to={{
-        pathname: '/menu/' + openorderInfo.openorder.recKey,
-        state: {
-          openorderInfo: openorderInfo
-        }
+        pathname: '/menu/' + toMenuKey,
+        // state: {
+        //   openorderInfo: openorderInfo
+        // }
       }} />
     }
 
-    return (
-      <div style={styles.container}>
-        <div style={styles.headerContainer}>
-          <div style={styles.header}>
-            <div style={styles.headerFirst}>TABLE</div>
-            <div style={styles.headerSecond}>{this.props.match.params.tableId}</div>
+    if (ready) {
+      return (
+        <div style={styles.container}>
+          <div style={styles.headerContainer}>
+            <div style={styles.header}>
+              <div style={styles.headerFirst}>TABLE</div>
+              <div style={styles.headerSecond}>{this.props.match.params.tableId}</div>
+            </div>
+            <div style={styles.header}>
+              <div style={styles.headerFirst}>ITEMS</div>
+              <div style={styles.headerSecond}>-</div>
+            </div>
+            <div style={styles.header}>
+              <div style={styles.headerFirst}>TOTAL</div>
+              <div style={styles.headerSecond}>$-</div>
+            </div>
           </div>
-          <div style={styles.header}>
-            <div style={styles.headerFirst}>ITEMS</div>
-            <div style={styles.headerSecond}>-</div>
-          </div>
-          <div style={styles.header}>
-            <div style={styles.headerFirst}>TOTAL</div>
-            <div style={styles.headerSecond}>$-</div>
-          </div>
-        </div>
 
-        <div style={styles.bodyContainer}>
-          <div style={styles.title}>Hi,</div>
-          <input style={styles.nameInputText} type='text' spellCheck='false'
-            value={name}
-            onChange={e => this.setState({ name: e.target.value })}
-            onFocus={e => e.target.select()} />
+          <div style={styles.bodyContainer}>
+            {/* <div style={styles.title}>Hi,</div> */}
+            <div style={styles.inputTitle}>ENTER NAME</div>
+            <input style={styles.nameInputText} type='text' spellCheck='false'
+              value={name}
+              placeholder='Guest'
+              onChange={e => this.setState({ name: e.target.value })}
+              onFocus={e => e.target.select()} />
 
-          <div style={styles.inputTitle}>SELECT PAX</div>
-          <div style={styles.paxInputText}>{pax}</div>
+            <div style={styles.inputTitle}>SELECT PAX</div>
+            <div style={styles.paxInputText}>{pax}</div>
 
-          <div style={styles.paxButtons}>
-            <div style={styles.paxButton} className={`${pax === 1 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 1 })}>1</div>
-            <div style={styles.paxButton} className={`${pax === 2 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 2 })}>2</div>
-            <div style={styles.paxButton} className={`${pax === 3 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 3 })}>3</div>
-            <div style={styles.paxButton} className={`${pax === 4 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 4 })}>4</div>
+            <div style={styles.paxButtons}>
+              <div style={styles.paxButton} className={`${pax === 1 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 1 })}>1</div>
+              <div style={styles.paxButton} className={`${pax === 2 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 2 })}>2</div>
+              <div style={styles.paxButton} className={`${pax === 3 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 3 })}>3</div>
+              <div style={styles.paxButton} className={`${pax === 4 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 4 })}>4</div>
+            </div>
+            <div style={styles.paxButtons}>
+              <div style={styles.paxButton} className={`${pax === 5 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 5 })}>5</div>
+              <div style={styles.paxButton} className={`${pax === 6 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 6 })}>6</div>
+              <div style={styles.paxButton} className={`${pax === 7 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 7 })}>7</div>
+              <div style={styles.paxButton} className={`${pax === 8 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 8 })}>8</div>
+            </div>
           </div>
-          <div style={styles.paxButtons}>
-            <div style={styles.paxButton} className={`${pax === 5 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 5 })}>5</div>
-            <div style={styles.paxButton} className={`${pax === 6 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 6 })}>6</div>
-            <div style={styles.paxButton} className={`${pax === 7 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 7 })}>7</div>
-            <div style={styles.paxButton} className={`${pax === 8 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 8 })}>8</div>
-          </div>
-        </div>
 
-        <div style={styles.button}
-          onClick={() => this.doCreateOpenorder()}>
-          START
-        </div>
-      </div >
-    );
+          <div style={styles.button}
+            onClick={() => this.doCreateOpenorder()}>
+            START
+          </div>
+        </div >
+      );
+    }
+
+    return null;
   }
 }
 

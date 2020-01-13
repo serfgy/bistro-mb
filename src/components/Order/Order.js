@@ -108,14 +108,29 @@ class Order extends Component {
         <div style={styles.backButton} onClick={() => this.setState({ toMenu: true })}>
           <div style={styles.backButtonText}>BACK</div>
         </div>
+        <div style={styles.backButton} onClick={() => this.setState({ toMenu: true })}>
+          <div style={styles.backButtonText}>BACK</div>
+        </div>
         <div style={styles.headerContainer}>
-          <div style={styles.header}>
-            <div style={styles.headerFirst}>TABLE</div>
-            <div style={styles.headerSecond}>{openorderInfo && openorderInfo.openorder.tableId}</div>
+          <div style={styles.headerColumn}>
+            <div style={styles.header}>
+              <div style={styles.headerFirst}>GUEST</div>
+              <div style={styles.headerSecond}>{openorderInfo && openorderInfo.openorder.vipName || 'Guest'}</div>
+            </div>
+            <div style={styles.header}>
+              <div style={styles.headerFirst}>ORDER</div>
+              <div style={styles.headerSecond}>#{openorderInfo && openorderInfo.openorder.recKey}</div>
+            </div>
           </div>
-          <div style={styles.header}>
-            <div style={styles.headerFirst}>TOTAL</div>
-            <div style={styles.headerSecond}>${openorderInfo && openorderInfo.openorder.grandTotal.toFixed(2)}</div>
+          <div style={styles.headerColumn}>
+            <div style={styles.header}>
+              <div style={styles.headerFirst}>TABLE</div>
+              <div style={styles.headerSecond}>{openorderInfo && openorderInfo.openorder.tableId}</div>
+            </div>
+            <div style={styles.header}>
+              <div style={styles.headerFirst}>TOTAL</div>
+              <div style={styles.headerSecond}>${openorderInfo && openorderInfo.openorder.grandTotal.toFixed(2)}</div>
+            </div>
           </div>
         </div>
         <div style={styles.subtitle}>订单</div>
@@ -172,6 +187,10 @@ const styles = ({
     position: 'relative',
   },
   backButton: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    color: 'white',
     marginTop: 10,
     height: 50,
     width: 80,
@@ -187,12 +206,12 @@ const styles = ({
     margin: '0px 0px 0px 20px',
   },
   headerContainer: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
     // backgroundColor: 'orange',
     display: 'flex',
-    flexDirection: 'column',
+    justifyContent: 'flex-end',
+  },
+  headerColumn: {
+    // backgroundColor: 'red',
   },
   header: {
     marginTop: 10,
@@ -221,7 +240,7 @@ const styles = ({
     fontSize: 36,
   },
   subtitle: {
-    margin: '40px 0px 0px 20px',
+    margin: '20px 0px 0px 20px',
     fontFamily: 'nunitosans-regular',
     letterSpacing: 2,
     fontSize: 16,

@@ -125,7 +125,7 @@ class Menu extends Component {
     const { match } = this.props;
     const { openorderInfo, toOrder,
       foldergrps, displays, selectedFoldergrp, selectedMenu, overlayMenuVisible } = this.state;
-    console.log('props', this.props);
+    console.log('props', openorderInfo);
 
     if (toOrder === true) {
       return <Redirect to={{
@@ -163,6 +163,10 @@ class Menu extends Component {
           <div style={styles.rightContainer}>
             <div style={styles.headerContainer}
               onClick={() => this.doToOrder()}>
+              <div style={styles.headerReverse}>
+                <div style={styles.headerFirstReverse}>{openorderInfo.openorder.vipName || 'GUEST'}</div>
+                <div style={styles.headerSecondReverse}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
+              </div>
               <div style={styles.header} className='bg-dark'>
                 <div style={styles.headerFirst}>TABLE</div>
                 <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
@@ -170,10 +174,6 @@ class Menu extends Component {
               <div style={styles.header} className={`background-transition ${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-dark'}`}>
                 <div style={styles.headerFirst}>ITEMS</div>
                 <div style={styles.headerSecond}>{openorderInfo.openorderItems.length}</div>
-              </div>
-              <div style={styles.header} className='bg-dark'>
-                <div style={styles.headerFirst}>TOTAL</div>
-                <div style={styles.headerSecond}>${openorderInfo.openorder.grandTotal.toFixed(0)}</div>
               </div>
             </div>
             <div style={{ margin: 10 }}>
@@ -252,10 +252,26 @@ const styles = ({
     fontSize: 10,
     color: 'white',
     letterSpacing: 2,
+    textTransform: 'uppercase',
   },
   headerSecond: {
     fontSize: 16,
     color: 'white',
+  },
+  headerReverse: {
+    marginLeft: 10,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  headerFirstReverse: {
+    fontSize: 10,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  headerSecondReverse: {
+    fontSize: 16,
   },
   selection: {
     width: 100,
