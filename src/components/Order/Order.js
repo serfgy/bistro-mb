@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect
-} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import constants from '../constants/constants';
 import { AntDesign } from 'react-web-vector-icons';
 
@@ -97,14 +91,11 @@ class Order extends Component {
   render() {
     const { match } = this.props;
     const { openorderInfo, toMenu } = this.state;
-    console.log('order', openorderInfo);
+    console.log('render order', openorderInfo);
 
     if (toMenu === true) {
       return <Redirect to={{
         pathname: '/menu/' + match.params.openorderRecKey,
-        // state: {
-        //   openorderInfo: openorderInfo
-        // }
       }} />
     }
 

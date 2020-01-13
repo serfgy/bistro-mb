@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect,
-} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import constants from '../constants/constants';
 import OverlayMenu from './OverlayMenu';
-
-// import Icon, { AntDesign, Feather } from 'react-web-vector-icons';
 
 class Menu extends Component {
   constructor(props) {
@@ -129,14 +121,11 @@ class Menu extends Component {
     const { match } = this.props;
     const { openorderInfo, toOrder,
       foldergrps, displays, selectedFoldergrp, selectedMenu, overlayMenuVisible } = this.state;
-    console.log('props', openorderInfo);
+    console.log('render menu', openorderInfo);
 
     if (toOrder === true) {
       return <Redirect to={{
         pathname: '/order/' + match.params.openorderRecKey,
-        // state: {
-        //   openorderInfo: openorderInfo
-        // }
       }} />
     }
 
@@ -156,7 +145,7 @@ class Menu extends Component {
                 onClick={() => this.doSelectFoldergrp(item)}>
                 <img style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.foldergrpId} />
                 <div style={styles.selectionTextFirst}>{item.name}</div>
-                <div style={styles.selectionBetween}>hidden</div>
+                <div style={styles.selectionBetween}>-</div>
                 <div style={styles.selectionTextSecond}>{item.foldergrpId}</div>
               </div>
             ))

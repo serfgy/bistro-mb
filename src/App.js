@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from 'react-router-dom';
 import './App.css';
 import Register from './components/Register/Register';
@@ -23,22 +22,18 @@ class App extends Component {
   componentDidMount() { }
 
   handleUpdateFromRegister = () => {
-    console.log('app receive register')
     this.setState({ bannerVisible: true })
   }
 
   handleUpdateFromMenu = (item) => {
-    console.log('app receive menu')
     this.setState({ bannerVisible: true, bannerContent: item })
   }
 
   handleUpdateFromOrder = (item) => {
-    console.log('app receive order')
     this.setState({ bannerVisible: true, bannerContent: item })
   }
 
   handleUpdateFromBanner = () => {
-    console.log('yep app receive order')
     this.setState({ bannerVisible: false, bannerContent: '', })
   }
 

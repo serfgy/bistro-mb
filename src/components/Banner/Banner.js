@@ -18,7 +18,7 @@ class Banner extends Component {
   render() {
     const { content } = this.props;
     const { ready } = this.state;
-    console.log('here banner');
+    console.log('render banner');
 
     return (
       <div style={styles.container} className={`opacity-transition ${ready && 'opacity-1'}`}

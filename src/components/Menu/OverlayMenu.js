@@ -30,6 +30,7 @@ class OverlayMenu extends Component {
   render() {
     const { selectedMenu } = this.props;
     const { modalInputValueQty } = this.state;
+    console.log('render overlaymenu');
 
     return (
       <div style={styles.overlay} className='disable-double-tap'>

@@ -1,13 +1,6 @@
 import React, { Component } from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect
-} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import constants from '../constants/constants';
-// import Icon, { AntDesign, Feather } from 'react-web-vector-icons';
 
 class Register extends Component {
   constructor(props) {
@@ -96,14 +89,11 @@ class Register extends Component {
 
   render() {
     const { ready, pax, name, toMenu, toMenuKey, } = this.state;
-    console.log('here register');
+    console.log('render register');
 
     if (toMenu) {
       return <Redirect to={{
         pathname: '/menu/' + toMenuKey,
-        // state: {
-        //   openorderInfo: openorderInfo
-        // }
       }} />
     }
 
