@@ -12,6 +12,7 @@ class Register extends Component {
       tableId: props.match.params.tableId,
       pax: 2,
       name: '',
+      masters: '',
     };
   }
 
@@ -21,35 +22,83 @@ class Register extends Component {
 
   doVerifyOpenorder() {
     const { tableId } = this.state;
-    let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/verify-openorder';
-    const body = {
-      shopId: 'X0201',
-      tableId: tableId,
-    };
-    console.log('body', body);
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-      },
-      body: JSON.stringify(body),
-    })
-      .then(response => response.json())
-      .then(response => {
-        console.log('post verify-openorder successful', response);
-        if (response.openorderRecKey) {
-          this.setState({
-            toMenuKey: response.openorderRecKey,
-            toMenu: true,
+
+    let promiseArray = [];
+
+    let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/foldergrps?orgId=X02';
+    let promiseObject = { url: url, nameString: 'foldergrps' };
+    promiseArray.push(promiseObject);
+
+    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/folders?orgId=X02&shopId=X0201'
+    promiseObject = { url: url, nameString: 'folders' };
+    promiseArray.push(promiseObject);
+
+    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/menus?orgId=X02';
+    promiseObject = { url: url, nameString: 'menus' };
+    promiseArray.push(promiseObject);
+
+    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/mods?orgId=X02'
+    promiseObject = { url: url, nameString: 'mods' };
+    promiseArray.push(promiseObject);
+
+    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/mod-bundles'
+    promiseObject = { url: url, nameString: 'modBundles' };
+    promiseArray.push(promiseObject);
+
+    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/combo-items?orgId=X02'
+    promiseObject = { url: url, nameString: 'comboItems' };
+    promiseArray.push(promiseObject);
+
+    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/combo-groups?orgId=X02'
+    promiseObject = { url: url, nameString: 'comboGroups' };
+    promiseArray.push(promiseObject);
+
+    Promise.all([
+      ...promiseArray.map(el =>
+        fetch(el.url)
+          .then(response => response.json())
+          .then(response => {
+            console.log('fetching', el.nameString, response);
+            return ({ [el.nameString]: response });
           })
-        }
-        else {
-          this.setState({ ready: true })
-        }
-      })
-      .catch(error => {
-        console.log(error);
+      )
+    ]).then(response => {
+      const masters = response.reduce((o, item) => ({ ...o, [Object.keys(item)[0]]: Object.values(item)[0] }), {});
+      console.log('masters', masters);
+      this.setState({
+        masters: masters,
       });
+    }).then(response => {
+      let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/verify-openorder';
+      const body = {
+        shopId: 'X0201',
+        tableId: tableId,
+      };
+      return fetch(url, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify(body),
+      })
+        .then(response => response.json())
+        .then(response => {
+          console.log('post verify-openorder successful', response);
+          if (response.openorderRecKey) {
+            this.setState({
+              toMenuKey: response.openorderRecKey,
+              toMenu: true,
+            })
+          } else {
+            this.setState({
+              ready: true,
+            })
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    });
   }
 
   doCreateOpenorder() {
@@ -77,7 +126,6 @@ class Register extends Component {
           return;
         }
         this.setState({
-          openorderInfo: response,
           toMenuKey: response.openorder.recKey,
           toMenu: true,
         })
@@ -88,12 +136,15 @@ class Register extends Component {
   }
 
   render() {
-    const { ready, pax, name, toMenu, toMenuKey, } = this.state;
+    const { ready, pax, name, toMenu, toMenuKey, masters } = this.state;
     console.log('render register');
 
     if (toMenu) {
       return <Redirect to={{
         pathname: '/menu/' + toMenuKey,
+        state: {
+          masters: masters,
+        }
       }} />
     }
 

@@ -9,27 +9,20 @@ class Menu extends Component {
     this.state = {
       overlayMenuVisible: false,
       toOrder: false,
+      foldergrps: props.location.state ? props.location.state.masters.foldergrps : '',
+      folders: props.location.state ? props.location.state.masters.folders : '',
+      menus: props.location.state ? props.location.state.masters.menus : '',
+      mods: props.location.state ? props.location.state.masters.mods : '',
+      modBundles: props.location.state ? props.location.state.masters.modBundles : '',
+      comboGroups: props.location.state ? props.location.state.masters.comboGroups : '',
+      comboItems: props.location.state ? props.location.state.masters.comboItems : '',
     };
   }
 
   componentDidMount() {
     const { match } = this.props;
-    fetch('https://dev.epbmobile.app:8090/fnb-ws/api/foldergrps?orgId=X02')
-      .then(response => response.json())
-      .then(response => {
-        this.setState({ foldergrps: response })
-        setTimeout(() => this.doSelectFoldergrp(response[0]), 500)
-      });
-    fetch('https://dev.epbmobile.app:8090/fnb-ws/api/folders?orgId=X02&shopId=X0201')
-      .then(response => response.json())
-      .then(response => {
-        this.setState({ folders: response })
-      });
-    fetch('https://dev.epbmobile.app:8090/fnb-ws/api/menus?orgId=X02')
-      .then(response => response.json())
-      .then(response => {
-        this.setState({ menus: response })
-      });
+    const { foldergrps } = this.state;
+    this.doSelectFoldergrp(foldergrps[0]);
     fetch('https://dev.epbmobile.app:8090/fnb-ws/api/openorders/' + match.params.openorderRecKey)
       .then(response => response.json())
       .then(response => {
