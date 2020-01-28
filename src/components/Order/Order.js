@@ -89,13 +89,16 @@ class Order extends Component {
   }
 
   render() {
-    const { match } = this.props;
+    const { match, location } = this.props;
     const { openorderInfo, toMenu } = this.state;
     console.log('render order', openorderInfo);
 
     if (toMenu === true) {
       return <Redirect to={{
         pathname: '/menu/' + match.params.openorderRecKey,
+        state: {
+          masters: location.state.masters,
+        }
       }} />
     }
 

@@ -111,7 +111,7 @@ class Menu extends Component {
   }
 
   render() {
-    const { match } = this.props;
+    const { match, location } = this.props;
     const { openorderInfo, toOrder,
       foldergrps, displays, selectedFoldergrp, selectedMenu, overlayMenuVisible } = this.state;
     console.log('render menu', openorderInfo);
@@ -119,6 +119,9 @@ class Menu extends Component {
     if (toOrder === true) {
       return <Redirect to={{
         pathname: '/order/' + match.params.openorderRecKey,
+        state: {
+          masters: location.state.masters,
+        }
       }} />
     }
 
