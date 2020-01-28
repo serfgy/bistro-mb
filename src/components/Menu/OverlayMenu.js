@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import constants from '../constants/constants';
-import Icon, { AntDesign, Feather } from 'react-web-vector-icons';
+import { AntDesign } from 'react-web-vector-icons';
 
 class OverlayMenu extends Component {
   constructor(props) {
@@ -30,13 +30,13 @@ class OverlayMenu extends Component {
   render() {
     const { selectedMenu } = this.props;
     const { modalInputValueQty } = this.state;
-    console.log('render overlaymenu');
+    console.log('render overlaymenu', selectedMenu);
 
     return (
       <div style={styles.overlay} className='disable-double-tap'>
         <div style={styles.overlayContent}>
           <div style={styles.imageContainer} className='box-shadow'>
-            <img style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
+            <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
           </div>
           <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
           <div style={styles.title}>{selectedMenu.menuName}</div>

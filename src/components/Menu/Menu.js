@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import constants from '../constants/constants';
 import OverlayMenu from './OverlayMenu';
+import OverlayCombo from './OverlayCombo';
 
 class Menu extends Component {
   constructor(props) {
     super(props);
     this.state = {
       overlayMenuVisible: false,
+      overlayComboVisible: false,
       toOrder: false,
       foldergrps: props.location.state ? props.location.state.masters.foldergrps : '',
       folders: props.location.state ? props.location.state.masters.folders : '',
@@ -50,10 +52,23 @@ class Menu extends Component {
   }
 
   doSelectMenu(item) {
-    this.setState({
-      selectedMenu: item,
-      overlayMenuVisible: true,
-    });
+    console.log('selected item', item);
+    if (item.menuType === 'O') {
+      const { comboGroups, comboItems } = this.state;
+      const selectedComboGroups = comboGroups.filter(el => el.refMenuId === item.menuId);
+      const selectedComboItems = comboItems.filter(el => el.refMenuId === item.menuId);
+      this.setState({
+        selectedMenu: item,
+        selectedComboGroups: selectedComboGroups,
+        selectedComboItems: selectedComboItems,
+        overlayComboVisible: true,
+      });
+    } else {
+      this.setState({
+        selectedMenu: item,
+        overlayMenuVisible: true,
+      });
+    }
   }
 
   handleUpdateFromOverlayMenu = (item) => {
@@ -99,6 +114,17 @@ class Menu extends Component {
       });
   }
 
+  handleUpdateFromOverlayCombo = (item) => {
+    const { match } = this.props;
+    const { selectedMenu } = this.state;
+
+    this.setState({ overlayComboVisible: false })
+
+    if (!item) {
+      return;
+    }
+  }
+
   doToOrder() {
     this.setState({
       toOrder: true,
@@ -113,7 +139,8 @@ class Menu extends Component {
   render() {
     const { match, location } = this.props;
     const { openorderInfo, toOrder,
-      foldergrps, displays, selectedFoldergrp, selectedMenu, overlayMenuVisible } = this.state;
+      foldergrps, displays, selectedFoldergrp, selectedMenu, overlayMenuVisible,
+      selectedComboGroups, selectedComboItems, overlayComboVisible } = this.state;
     console.log('render menu', openorderInfo);
 
     if (toOrder === true) {
@@ -133,13 +160,21 @@ class Menu extends Component {
             selectedMenu={selectedMenu}
             handleUpdateFromOverlayMenu={this.handleUpdateFromOverlayMenu} />
         }
+        {
+          overlayComboVisible &&
+          <OverlayCombo
+            selectedMenu={selectedMenu}
+            selectedComboGroups={selectedComboGroups}
+            selectedComboItems={selectedComboItems}
+            handleUpdateFromOverlayCombo={this.handleUpdateFromOverlayCombo} />
+        }
         <div style={styles.leftContainer}>
           {
             foldergrps && foldergrps.map(item => (
               <div style={styles.selection}
                 key={item.recKey}
                 onClick={() => this.doSelectFoldergrp(item)}>
-                <img style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.foldergrpId} />
+                <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.foldergrpId} />
                 <div style={styles.selectionTextFirst}>{item.name}</div>
                 <div style={styles.selectionBetween}>-</div>
                 <div style={styles.selectionTextSecond}>{item.foldergrpId}</div>
@@ -186,7 +221,7 @@ class Menu extends Component {
                     </div>
                     <div style={styles.menuRight}>
                       <div style={styles.imageContainer}>
-                        <img style={styles.menuImage} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.stkId} />
+                        <img alt='' style={styles.menuImage} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.stkId} />
                       </div>
                     </div>
                   </div>
@@ -219,7 +254,7 @@ const styles = ({
   rightContainer: {
     flex: 1,
     height: '100%',
-    overflow: 'scroll',
+    overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
   },

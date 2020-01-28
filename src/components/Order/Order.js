@@ -114,7 +114,7 @@ class Order extends Component {
           <div style={styles.headerColumn}>
             <div style={styles.header}>
               <div style={styles.headerFirst}>GUEST</div>
-              <div style={styles.headerSecond}>{openorderInfo && openorderInfo.openorder.vipName || 'Guest'}</div>
+              <div style={styles.headerSecond}>{openorderInfo && (openorderInfo.openorder.vipName || 'Guest')}</div>
             </div>
             <div style={styles.header}>
               <div style={styles.headerFirst}>ORDER</div>
@@ -189,7 +189,6 @@ const styles = ({
     position: 'absolute',
     top: 0,
     left: 0,
-    color: 'white',
     marginTop: 10,
     height: 50,
     width: 80,
