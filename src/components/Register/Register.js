@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import Fingerprint2 from 'fingerprintjs2';
 import constants from '../constants/constants';
 
 class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      fingerprint: '',
       ready: false,
       toMenu: false,
       toMenuKey: '',
@@ -17,10 +19,21 @@ class Register extends Component {
   }
 
   componentDidMount() {
-    this.doVerifyOpenorder();
+    this.doFingerprint();
   }
 
-  doVerifyOpenorder() {
+  async doFingerprint() {
+    const components = await Fingerprint2.getPromise();
+    const values = components.map(component => component.value);
+    const murmur = Fingerprint2.x64hash128(values.join(''), 31);
+    console.log('fingerprint', murmur);
+    this.setState({
+      fingerprint: murmur,
+    })
+    this.doVerifyOpenorder(murmur);
+  }
+
+  doVerifyOpenorder(fingerprint) {
     const { tableId } = this.state;
 
     let promiseArray = [];
@@ -73,6 +86,7 @@ class Register extends Component {
       const body = {
         shopId: 'X0201',
         tableId: tableId,
+        fingerprint: fingerprint,
       };
       return fetch(url, {
         method: 'POST',
@@ -102,7 +116,7 @@ class Register extends Component {
   }
 
   doCreateOpenorder() {
-    const { tableId, pax, name } = this.state;
+    const { fingerprint, tableId, pax, name } = this.state;
     let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/create-openorder';
     const body = {
       shopId: 'X0201',
@@ -110,6 +124,7 @@ class Register extends Component {
       pax: pax,
       vipName: name,
       phone: '',
+      fingerprint: fingerprint,
     };
     console.log('body', body);
     fetch(url, {
@@ -136,7 +151,7 @@ class Register extends Component {
   }
 
   render() {
-    const { ready, pax, name, toMenu, toMenuKey, masters } = this.state;
+    const { fingerprint, ready, pax, name, toMenu, toMenuKey, masters } = this.state;
     console.log('render register');
 
     if (toMenu) {
@@ -168,6 +183,7 @@ class Register extends Component {
 
           <div style={styles.bodyContainer}>
             {/* <div style={styles.title}>Hi,</div> */}
+            <div>{fingerprint}</div>
             <div style={styles.inputTitle}>ENTER NAME</div>
             <input style={styles.nameInputText} type='text' spellCheck='false'
               value={name}
