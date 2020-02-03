@@ -85,8 +85,8 @@ class Register extends Component {
       let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/verify-openorder';
       const body = {
         shopId: 'X0201',
-        tableId: tableId,
         fingerprint: fingerprint,
+        orderType: tableId === 'null' ? 'B' : 'A',
       };
       return fetch(url, {
         method: 'POST',
@@ -98,15 +98,24 @@ class Register extends Component {
         .then(response => response.json())
         .then(response => {
           console.log('post verify-openorder successful', response);
-          if (response.openorderRecKey) {
+          if (tableId === 'null') {
+            // queue qr code
             this.setState({
-              toMenuKey: response.openorderRecKey,
+              toMenuKey: response.openorder.recKey,
               toMenu: true,
             })
           } else {
-            this.setState({
-              ready: true,
-            })
+            // table qr code
+            if (response.openorder && response.openorder.tableId && tableId === response.openorder.tableId) {
+              this.setState({
+                toMenuKey: response.openorder.recKey,
+                toMenu: true,
+              })
+            } else {
+              this.setState({
+                ready: true,
+              })
+            }
           }
         })
         .catch(error => {
@@ -115,9 +124,9 @@ class Register extends Component {
     });
   }
 
-  doCreateOpenorder() {
+  doUpdateOpenorder() {
     const { fingerprint, tableId, pax, name } = this.state;
-    let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/create-openorder';
+    let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/update-openorder';
     const body = {
       shopId: 'X0201',
       tableId: tableId,
@@ -136,7 +145,7 @@ class Register extends Component {
     })
       .then(response => response.json())
       .then(response => {
-        console.log('post create-openorder successful', response);
+        console.log('post update-openorder successful', response);
         if (response.message) {
           return;
         }
@@ -209,7 +218,7 @@ class Register extends Component {
           </div>
 
           <div style={styles.button}
-            onClick={() => this.doCreateOpenorder()}>
+            onClick={() => this.doUpdateOpenorder()}>
             START
           </div>
         </div >

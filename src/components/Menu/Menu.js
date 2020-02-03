@@ -191,10 +191,13 @@ class Menu extends Component {
                 <div style={styles.headerFirstReverse}>{openorderInfo.openorder.vipName || 'GUEST'}</div>
                 <div style={styles.headerSecondReverse}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
               </div>
-              <div style={styles.header} className='bg-dark'>
-                <div style={styles.headerFirst}>TABLE</div>
-                <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
-              </div>
+              {
+                openorderInfo.openorder.tableId &&
+                <div style={styles.header} className='bg-dark'>
+                  <div style={styles.headerFirst}>TABLE</div>
+                  <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
+                </div>
+              }
               <div style={styles.header} className={`background-transition ${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-dark'}`}>
                 <div style={styles.headerFirst}>ITEMS</div>
                 <div style={styles.headerSecond}>{openorderInfo.openorderItems.length}</div>
