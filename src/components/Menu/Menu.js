@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import Swiper from 'react-id-swiper';
+import 'swiper/css/swiper.css';
 import constants from '../constants/constants';
 import OverlayMenu from './OverlayMenu';
 import OverlayCombo from './OverlayCombo';
@@ -143,6 +145,18 @@ class Menu extends Component {
       selectedComboGroups, selectedComboItems, overlayComboVisible } = this.state;
     console.log('render menu', openorderInfo);
 
+    const params = {
+      autoplay: {
+        delay: 2500,
+        disableOnInteraction: false
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      },
+      loop: true,
+    }
+
     if (toOrder === true) {
       return <Redirect to={{
         pathname: '/order/' + match.params.openorderRecKey,
@@ -153,98 +167,139 @@ class Menu extends Component {
     }
 
     return (
-      <div style={styles.container}>
-        {
-          overlayMenuVisible &&
-          <OverlayMenu
-            selectedMenu={selectedMenu}
-            handleUpdateFromOverlayMenu={this.handleUpdateFromOverlayMenu} />
-        }
-        {
-          overlayComboVisible &&
-          <OverlayCombo
-            selectedMenu={selectedMenu}
-            selectedComboGroups={selectedComboGroups}
-            selectedComboItems={selectedComboItems}
-            handleUpdateFromOverlayCombo={this.handleUpdateFromOverlayCombo} />
-        }
-        <div style={styles.leftContainer}>
-          {
-            foldergrps && foldergrps.map(item => (
-              <div style={styles.selection}
-                key={item.recKey}
-                onClick={() => this.doSelectFoldergrp(item)}>
-                <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.foldergrpId} />
-                <div style={styles.selectionTextFirst}>{item.name}</div>
-                <div style={styles.selectionBetween}>-</div>
-                <div style={styles.selectionTextSecond}>{item.foldergrpId}</div>
+      <div>
+        <div style={styles.aboveContainer}>
+          <Swiper {...params}>
+            <div>
+              <div style={styles.slide}>
+                <img alt='' style={styles.menuImage} src={'https://www.nookmag.com/wp-content/uploads/2018/07/KV-Landscape.jpg'} />
               </div>
-            ))
-          }
+            </div>
+            <div>
+              <div style={styles.slide}>
+                <img alt='' style={styles.menuImage} src={'https://eatbook.sg/wp-content/uploads/2020/01/Burger-King-Bundle-Meal.jpg'} />
+              </div>
+            </div>
+            <div>
+              <div style={styles.slide}>
+                <img alt='' style={styles.menuImage} src={'https://pbs.twimg.com/media/DofRNbMWsAApMc0.jpg:large'} />
+              </div>
+            </div>
+            <div>
+              <div style={styles.slide}>
+                <img alt='' style={styles.menuImage} src={'https://www.subway.com/~/media/Base_Arabic/English/Promotions/Marquees/Mobile/HomeBanner/jan-2018-all-markets-mobile-en.jpg'} />
+              </div>
+            </div>
+          </Swiper>
         </div>
-        {
-          selectedFoldergrp && openorderInfo &&
-          <div style={styles.rightContainer}>
-            <div style={styles.headerContainer}
-              onClick={() => this.doToOrder()}>
-              <div style={styles.headerReverse}>
-                <div style={styles.headerFirstReverse}>{openorderInfo.openorder.vipName || 'GUEST'}</div>
-                <div style={styles.headerSecondReverse}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
-              </div>
-              {
-                openorderInfo.openorder.tableId &&
-                <div style={styles.header} className='bg-dark'>
-                  <div style={styles.headerFirst}>TABLE</div>
-                  <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
+        <div style={styles.container}>
+          {
+            overlayMenuVisible &&
+            <OverlayMenu
+              selectedMenu={selectedMenu}
+              handleUpdateFromOverlayMenu={this.handleUpdateFromOverlayMenu} />
+          }
+          {
+            overlayComboVisible &&
+            <OverlayCombo
+              selectedMenu={selectedMenu}
+              selectedComboGroups={selectedComboGroups}
+              selectedComboItems={selectedComboItems}
+              handleUpdateFromOverlayCombo={this.handleUpdateFromOverlayCombo} />
+          }
+          <div style={styles.leftContainer}>
+            {
+              foldergrps && foldergrps.map(item => (
+                <div style={styles.selection}
+                  key={item.recKey}
+                  onClick={() => this.doSelectFoldergrp(item)}>
+                  <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.foldergrpId} />
+                  <div style={styles.selectionTextFirst}>{item.name}</div>
+                  <div style={styles.selectionBetween}>-</div>
+                  <div style={styles.selectionTextSecond}>{item.foldergrpId}</div>
                 </div>
-              }
-              <div style={styles.header} className={`background-transition ${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-dark'}`}>
-                <div style={styles.headerFirst}>ITEMS</div>
-                <div style={styles.headerSecond}>{openorderInfo.openorderItems.length}</div>
+              ))
+            }
+          </div>
+          {
+            selectedFoldergrp && openorderInfo &&
+            <div style={styles.rightContainer}>
+              <div style={styles.headerContainer}
+                onClick={() => this.doToOrder()}>
+                <div style={styles.headerReverse}>
+                  <div style={styles.headerFirstReverse}>{openorderInfo.openorder.vipName || 'GUEST'}</div>
+                  <div style={styles.headerSecondReverse}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
+                </div>
+                {
+                  openorderInfo.openorder.tableId &&
+                  <div style={styles.header} className='bg-dark'>
+                    <div style={styles.headerFirst}>TABLE</div>
+                    <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
+                  </div>
+                }
+                <div style={styles.header} className={`background-transition ${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-dark'}`}>
+                  <div style={styles.headerFirst}>ITEMS</div>
+                  <div style={styles.headerSecond}>{openorderInfo.openorderItems.length}</div>
+                </div>
               </div>
-            </div>
-            <div style={{ margin: 10 }}>
-              <div style={styles.subtitle}>{selectedFoldergrp.name}</div>
-              <div style={styles.title}>{selectedFoldergrp.foldergrpId}</div>
-              <div style={styles.subsubtitle}>• {displays.length} selections •</div>
-            </div>
-            <div style={styles.menus}>
-              {
-                displays && displays.map(item => (
-                  <div style={styles.menu}
-                    key={item.recKey}
-                    onClick={() => this.doSelectMenu(item)}>
-                    <div style={styles.menuLeft}>
-                      <div style={styles.menuName}>{item.menuName}</div>
-                      <div style={styles.menuPrice}>${item.listPrice}</div>
-                      {
-                        openorderInfo.openorderItems.find(el => el.stkId === item.stkId) &&
-                        <div style={styles.menuOrdered}>ORDERED {this.doCalculateOrderedQty(item)}</div>
-                      }
-                    </div>
-                    <div style={styles.menuRight}>
-                      <div style={styles.imageContainer}>
-                        <img alt='' style={styles.menuImage} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.stkId} />
+              <div style={{ margin: 10 }}>
+                <div style={styles.subtitle}>{selectedFoldergrp.name}</div>
+                <div style={styles.title}>{selectedFoldergrp.foldergrpId}</div>
+                <div style={styles.subsubtitle}>• {displays.length} selections •</div>
+              </div>
+              <div style={styles.menus}>
+                {
+                  displays && displays.map(item => (
+                    <div style={styles.menu}
+                      key={item.recKey}
+                      onClick={() => this.doSelectMenu(item)}>
+                      <div style={styles.menuLeft}>
+                        <div style={styles.menuName}>{item.menuName}</div>
+                        <div style={styles.menuPrice}>${item.listPrice}</div>
+                        {
+                          openorderInfo.openorderItems.find(el => el.stkId === item.stkId) &&
+                          <div style={styles.menuOrdered}>ORDERED {this.doCalculateOrderedQty(item)}</div>
+                        }
+                      </div>
+                      <div style={styles.menuRight}>
+                        <div style={styles.imageContainer}>
+                          <img alt='' style={styles.menuImage} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.stkId} />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
-              }
+                  ))
+                }
+              </div>
             </div>
-          </div>
-        }
+          }
+        </div>
       </div>
     );
   }
 }
 
 const styles = ({
+  aboveContainer: {
+    // backgroundColor: 'green',
+  },
+  slide: {
+    margin: 10,
+    borderRadius: 10,
+    height: 200,
+    position: 'relative',
+    zIndex: 1,
+    overflow: 'hidden',
+    borderRadius: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
     display: 'flex',
     // backgroundColor: constants.reserved
   },

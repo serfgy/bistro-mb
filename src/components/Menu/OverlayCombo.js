@@ -77,7 +77,7 @@ class OverlayCombo extends Component {
 const styles = ({
   overlay: {
     backgroundColor: 'rgba(255,255,255,0.95)',
-    position: 'absolute',
+    position: 'fixed',
     zIndex: 2,
     top: 0,
     left: 0,
