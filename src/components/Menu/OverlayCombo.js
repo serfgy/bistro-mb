@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import constants from '../constants/constants';
 import { AntDesign } from 'react-web-vector-icons';
+import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
 
 class OverlayCombo extends Component {
   constructor(props) {
@@ -11,6 +12,12 @@ class OverlayCombo extends Component {
   }
 
   componentDidMount() {
+    this.targetElement = document.querySelector('#targetElement');
+    disableBodyScroll(this.targetElement);
+  }
+
+  componentWillUnmount() {
+    enableBodyScroll(this.targetElement);
   }
 
   render() {
@@ -21,7 +28,7 @@ class OverlayCombo extends Component {
     return (
       <div style={styles.overlay} className='disable-double-tap'>
         <div style={styles.overlayContent} onClick={() => this.props.handleUpdateFromOverlayCombo()}>
-          <div style={styles.overlayScroll}>
+          <div style={styles.overlayScroll} id='targetElement'>
             <div style={styles.subtitle}>${selectedMenu.listPrice}</div>
             <div style={styles.title}>{selectedMenu.menuName}</div>
             <div style={styles.subsubtitle}>You may select an item for each option.</div>
