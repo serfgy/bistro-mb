@@ -107,9 +107,6 @@ class Order extends Component {
         <div style={styles.backButton} onClick={() => this.setState({ toMenu: true })}>
           <div style={styles.backButtonText}>BACK</div>
         </div>
-        <div style={styles.backButton} onClick={() => this.setState({ toMenu: true })}>
-          <div style={styles.backButtonText}>BACK</div>
-        </div>
         <div style={styles.headerContainer}>
           <div style={styles.headerColumn}>
             <div style={styles.header}>
@@ -124,7 +121,7 @@ class Order extends Component {
           <div style={styles.headerColumn}>
             <div style={styles.header}>
               <div style={styles.headerFirst}>TABLE</div>
-              <div style={styles.headerSecond}>{openorderInfo && openorderInfo.openorder.tableId}</div>
+              <div style={styles.headerSecond}>{openorderInfo && (openorderInfo.openorder.tableId || '-')}</div>
             </div>
             <div style={styles.header}>
               <div style={styles.headerFirst}>TOTAL</div>
@@ -145,26 +142,41 @@ class Order extends Component {
             <div style={{ width: 100, textAlign: 'right', letterSpacing: 2, color: constants.grey1, fontFamily: 'nunito-semibold', fontSize: 12 }}>TOTAL</div>
           </div>
           {
-            openorderInfo && openorderInfo.openorderItems && openorderInfo.openorderItems.map(item => (
-              <div style={styles.order}
-                key={item.recKey}>
-                {
-                  item.confirmFlg === 'N' ?
-                    <div style={styles.iconContainer} onClick={() => this.doDeleteOpenorderItem(item)}>
-                      <AntDesign name='minuscircleo' size={16} color={constants.paid} />
+            openorderInfo && openorderInfo.openorderItems && openorderInfo.openorderItems.map(item => {
+              if (item.refRecKey) {
+                return (
+                  <div style={styles.order}
+                    key={item.recKey}>
+                    <div style={styles.iconContainer}></div>
+                    <div style={styles.detailContainer}>
+                      <div style={styles.detailContainerFirst}></div>
+                      <div style={styles.detailContainerSecond}>- {item.menuName}</div>
+                      <div style={styles.detailContainerThird}></div>
                     </div>
-                    :
-                    <div style={styles.iconContainer}>
-                      <AntDesign name='check' size={16} color={constants.grey5} />
-                    </div>
-                }
-                <div style={styles.detailContainer}>
-                  <div style={styles.detailContainerFirst}>{item.orderQty}</div>
-                  <div style={styles.detailContainerSecond}>{item.menuName}</div>
-                  <div style={styles.detailContainerThird}>${item.lineTotal.toFixed(2)}</div>
+                  </div>
+                )
+              }
+              return (
+                <div style={styles.order}
+                  key={item.recKey}>
+                  {
+                    item.confirmFlg === 'N' ?
+                      <div style={styles.iconContainer} onClick={() => this.doDeleteOpenorderItem(item)}>
+                        <AntDesign name='minuscircleo' size={16} color={constants.paid} />
+                      </div>
+                      :
+                      <div style={styles.iconContainer}>
+                        <AntDesign name='check' size={16} color={constants.grey5} />
+                      </div>
+                  }
+                  <div style={styles.detailContainer}>
+                    <div style={styles.detailContainerFirst}>{item.orderQty}</div>
+                    <div style={styles.detailContainerSecond}>{item.menuName}</div>
+                    <div style={styles.detailContainerThird}>${item.lineTotal.toFixed(2)}</div>
+                  </div>
                 </div>
-              </div>
-            ))
+              )
+            })
           }
         </div>
         {

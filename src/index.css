@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
   /* overflow: hidden; */
 }
 
@@ -40,8 +41,8 @@ input { outline: none; }
   background-color: #23272A;
 }
 
-.bg-paid {
-  background-color: #E84855;
+.bg-brand {
+  background-color: rgb(0,70,31);
 }
 
 .bg-grey {

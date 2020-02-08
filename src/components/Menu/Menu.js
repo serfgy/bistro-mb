@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
 import constants from '../constants/constants';
+import logo from '../images/logo.png';
 import OverlayMenu from './OverlayMenu';
 import OverlayCombo from './OverlayCombo';
 
@@ -13,6 +14,7 @@ class Menu extends Component {
       overlayMenuVisible: false,
       overlayComboVisible: false,
       toOrder: false,
+      language: props.language,
       foldergrps: props.location.state ? props.location.state.masters.foldergrps : '',
       folders: props.location.state ? props.location.state.masters.folders : '',
       menus: props.location.state ? props.location.state.masters.menus : '',
@@ -173,9 +175,22 @@ class Menu extends Component {
     return openorderInfo.openorderItems.filter(el => el.stkId === item.stkId).reduce((a, b) => +a + +b.orderQty, 0);
   }
 
+  doToggleLanguage() {
+    const { language } = this.state;
+    if (language === 'en') {
+      this.setState({
+        language: 'zh',
+      })
+    } else {
+      this.setState({
+        language: 'en',
+      })
+    }
+  }
+
   render() {
     const { match, location } = this.props;
-    const { openorderInfo, toOrder,
+    const { language, openorderInfo, toOrder,
       foldergrps, displays, selectedFoldergrp, selectedMenu, overlayMenuVisible,
       availableComboGroups, availableComboItems, overlayComboVisible } = this.state;
     console.log('render menu', openorderInfo);
@@ -203,6 +218,36 @@ class Menu extends Component {
 
     return (
       <div>
+        {
+          openorderInfo &&
+          <div style={styles.headerContainer}>
+            <div style={styles.headerAbsolute}>
+              <img alt='' style={styles.menuImage} src={logo} />
+            </div>
+            <div style={styles.headerAbsolute2} onClick={() => this.doToggleLanguage()}>
+              <div style={styles.headerFirstReverse}>{language === 'en' ? 'EN' : 'ZH'}</div>
+              <div style={styles.headerSecondReverse}>{language === 'en' ? '英' : '中'}</div>
+            </div>
+            <div style={styles.headerReverse}
+              onClick={() => this.doToOrder()}>
+              <div style={styles.headerFirstReverse}>{openorderInfo.openorder.vipName || 'GUEST'}</div>
+              <div style={styles.headerSecondReverse}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
+            </div>
+            {
+              openorderInfo.openorder.tableId &&
+              <div style={styles.header} className='bg-dark'
+                onClick={() => this.doToOrder()}>
+                <div style={styles.headerFirst}>TABLE</div>
+                <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
+              </div>
+            }
+            <div style={styles.header} className={`background-transition ${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-brand' : 'bg-dark'}`}
+              onClick={() => this.doToOrder()}>
+              <div style={styles.headerFirst}>ITEMS</div>
+              <div style={styles.headerSecond}>{openorderInfo.openorderItems.length}</div>
+            </div>
+          </div>
+        }
         <div style={styles.aboveContainer}>
           <Swiper {...params}>
             <div>
@@ -259,28 +304,10 @@ class Menu extends Component {
           {
             selectedFoldergrp && openorderInfo &&
             <div style={styles.rightContainer}>
-              <div style={styles.headerContainer}
-                onClick={() => this.doToOrder()}>
-                <div style={styles.headerReverse}>
-                  <div style={styles.headerFirstReverse}>{openorderInfo.openorder.vipName || 'GUEST'}</div>
-                  <div style={styles.headerSecondReverse}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
-                </div>
-                {
-                  openorderInfo.openorder.tableId &&
-                  <div style={styles.header} className='bg-dark'>
-                    <div style={styles.headerFirst}>TABLE</div>
-                    <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
-                  </div>
-                }
-                <div style={styles.header} className={`background-transition ${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-dark'}`}>
-                  <div style={styles.headerFirst}>ITEMS</div>
-                  <div style={styles.headerSecond}>{openorderInfo.openorderItems.length}</div>
-                </div>
-              </div>
               <div style={{ margin: 10 }}>
                 <div style={styles.subtitle}>{selectedFoldergrp.name}</div>
                 <div style={styles.title}>{selectedFoldergrp.foldergrpId}</div>
-                <div style={styles.subsubtitle}>• {displays.length} selections •</div>
+                <div style={styles.subsubtitle}>• {displays.length} {language === 'en' ? 'selections' : '菜单项目'} •</div>
               </div>
               <div style={styles.menus}>
                 {
@@ -289,7 +316,7 @@ class Menu extends Component {
                       key={item.recKey}
                       onClick={() => this.doSelectMenu(item)}>
                       <div style={styles.menuLeft}>
-                        <div style={styles.menuName}>{item.menuName}</div>
+                        <div style={styles.menuName}>{language === 'en' ? item.menuName : item.menuNameLang}</div>
                         <div style={styles.menuPrice}>${item.listPrice}</div>
                         {
                           openorderInfo.openorderItems.find(el => el.stkId === item.stkId) &&
@@ -353,7 +380,7 @@ const styles = ({
   },
   headerContainer: {
     display: 'flex',
-    margin: '0px 10px 0px 10px',
+    margin: '10px 10px 0px 10px',
     height: 80,
     justifyContent: 'flex-end',
   },
@@ -364,6 +391,28 @@ const styles = ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  headerAbsolute: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    width: 50,
+    height: 80,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerAbsolute2: {
+    position: 'absolute',
+    top: 10,
+    left: 70,
+    width: 50,
+    height: 80,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
   headerFirst: {
     fontSize: 10,
@@ -480,7 +529,7 @@ const styles = ({
     fontSize: 12,
     letterSpacing: 1,
     color: 'white',
-    backgroundColor: constants.reserved,
+    backgroundColor: constants.brand,
     height: 20,
     borderRadius: 10,
     padding: '0px 5px 0px 5px',

@@ -4,6 +4,7 @@ import {
   Switch,
   Route,
 } from 'react-router-dom';
+import { LOCALE } from './locale';
 import './App.css';
 import Register from './components/Register/Register';
 import Menu from './components/Menu/Menu';
@@ -56,7 +57,7 @@ class App extends Component {
               )} />
             <Route path='/menu/:openorderRecKey'
               render={(routeProps) => (
-                <Menu {...routeProps} handleUpdateFromMenu={this.handleUpdateFromMenu} />
+                <Menu {...routeProps} handleUpdateFromMenu={this.handleUpdateFromMenu} language={LOCALE()} />
               )} />
             <Route path='/order/:openorderRecKey'
               render={(routeProps) => (
