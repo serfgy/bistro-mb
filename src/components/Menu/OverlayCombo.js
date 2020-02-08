@@ -8,6 +8,7 @@ class OverlayCombo extends Component {
     super(props);
     this.state = {
       modalInputValueQty: 1,
+      selectedComboItems: [],
     };
   }
 
@@ -20,41 +21,54 @@ class OverlayCombo extends Component {
     enableBodyScroll(this.targetElement);
   }
 
+  doSelectComboItem(group, item) {
+    const { selectedComboItems } = this.state;
+    let selectedComboItemsUpdate = selectedComboItems;
+    let itemUpdate = { ...item, combogroupRecKey: group.recKey };
+    if (!selectedComboItems.find(el => el.recKey === item.recKey)) {
+      selectedComboItemsUpdate.push(itemUpdate);
+    }
+    this.setState({
+      selectedComboItems: selectedComboItemsUpdate,
+    });
+  }
+
   render() {
-    const { selectedMenu, selectedComboGroups, selectedComboItems, } = this.props;
-    const { modalInputValueQty } = this.state;
-    console.log('render overlaycombo', selectedMenu, selectedComboGroups, selectedComboItems);
+    const { selectedMenu, availableComboGroups, availableComboItems, } = this.props;
+    const { selectedComboItems } = this.state;
+    console.log('render overlaycombo', selectedComboItems);
 
     return (
       <div style={styles.overlay} className='disable-double-tap'>
-        <div style={styles.overlayContent} onClick={() => this.props.handleUpdateFromOverlayCombo()}>
+        <div style={styles.overlayContent}>
           <div style={styles.overlayScroll} id='targetElement'>
-            <div style={styles.subtitle}>${selectedMenu.listPrice}</div>
-            <div style={styles.title}>{selectedMenu.menuName}</div>
-            <div style={styles.subsubtitle}>You may select an item for each option.</div>
+            <div style={styles.backButton} onClick={() => this.props.handleUpdateFromOverlayCombo()}>
+              <div style={styles.backButtonText}>BACK</div>
+            </div>
+            <div style={styles.menuContainer}>
+              <div style={styles.imageContainer} className='box-shadow'>
+                <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
+              </div>
+              <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
+              <div style={styles.title}>{selectedMenu.menuName}</div>
+            </div>
             {
-              selectedComboGroups && selectedComboGroups.map(el => (
+              availableComboGroups && availableComboGroups.map(el => (
                 <div style={styles.groupContainer} key={el.recKey}>
                   <div style={styles.groupTitle}>{el.groupName}</div>
-                  <div style={styles.menus}>
+                  <div style={styles.groupItems}>
                     {
-                      selectedComboItems && selectedComboItems.filter(item => item.groupNo === el.groupNo).map(item => (
-                        <div style={styles.menu}
+                      availableComboItems && availableComboItems.filter(item => item.groupNo === el.groupNo).map(item => (
+                        <div style={styles.groupItem}
                           key={item.recKey}
-                          onClick={() => this.doSelectMenu(item)}>
-                          <div style={styles.menuLeft}>
-                            <div style={styles.menuName}>{item.menuName}</div>
-                            <div style={styles.menuPrice}>${item.listPrice}</div>
-                            {/* {
-                              openorderInfo.openorderItems.find(el => el.stkId === item.stkId) &&
-                              <div style={styles.menuOrdered}>ORDERED {this.doCalculateOrderedQty(item)}</div>
-                            } */}
-                          </div>
-                          <div style={styles.menuRight}>
-                            <div style={styles.imageContainer}>
-                              <img alt='' style={styles.menuImage} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.stkId} />
-                            </div>
-                          </div>
+                          onClick={() => this.doSelectComboItem(el, item)}>
+                          {
+                            selectedComboItems.find(obj => obj.recKey === item.recKey) ?
+                              <div style={styles.groupItemLeftSelected}></div>
+                              :
+                              <div style={styles.groupItemLeft}></div>
+                          }
+                          <div style={styles.groupItemRight}>{item.menuName}</div>
                         </div>
                       ))
                     }
@@ -69,7 +83,7 @@ class OverlayCombo extends Component {
                 <div style={styles.actionText}>BACK</div>
               </div>
               <div style={styles.action}
-                onClick={() => this.props.handleUpdateFromOverlayCombo()}>
+                onClick={() => this.props.handleUpdateFromOverlayCombo(selectedComboItems)}>
                 <AntDesign name='check' size={64} color={constants.vacant} />
                 <div style={styles.actionText}>OK</div>
               </div>
@@ -97,7 +111,7 @@ const styles = ({
   overlayContent: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'green',
+    // backgroundColor: 'green',
     // borderTopLeftRadius: 20,
     // borderBottomRightRadius: 20,
     overflow: 'hidden',
@@ -107,56 +121,107 @@ const styles = ({
   },
   overlayScroll: {
     overflow: 'scroll',
+    position: 'relative',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    marginTop: 10,
+    height: 50,
+    width: 80,
+    backgroundColor: constants.paid,
+    fontSize: 10,
+    color: 'white',
+    letterSpacing: 2,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    margin: '0px 0px 0px 20px',
+  },
+  menuContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     margin: '0px 20px 0px 20px',
-    fontFamily: 'nunitosans-regular',
+    fontFamily: 'nunitosans-semibold',
+    fontWeight: 'bold',
     fontSize: 24,
-  },
-  subtitle: {
-    margin: '20px 0px 0px 20px',
-    fontFamily: 'nunito-bold',
-    fontSize: 16,
-  },
-  subsubtitle: {
-    margin: '0px 0px 0px 20px',
-    fontFamily: 'nunito-regular',
-    fontSize: 16,
   },
   groupContainer: {
     margin: '20px 0px 20px 0px',
     backgroundColor: 'pink',
-    height: 400,
+    // height: 400,
   },
   groupTitle: {
     margin: '20px 0px 0px 20px',
     fontFamily: 'nunito-bold',
+    fontWeight: 'bold',
     fontSize: 16,
   },
-  menus: {
-    flex: 1,
-    backgroundColor: 'green',
-    borderRadius: 10,
-    margin: '10px 10px 0px 10px',
-    overflowY: 'scroll',
+  groupItems: {
+    // backgroundColor: 'orange',
+    margin: '0px 20px 0px 20px',
   },
-  menu: {
+  groupItem: {
     display: 'flex',
     flexDirection: 'row',
-    margin: 10,
+    // backgroundColor: 'purple',
+    margin: '0px 0px 20px 0px',
+    alignItems: 'center',
+  },
+  groupItemLeft: {
+    // backgroundColor: constants.paid,
+    height: 16,
+    width: 16,
+    marginLeft: 10,
+    marginRight: 10,
     borderRadius: 5,
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    border: `1px solid ${constants.paid}`,
   },
-  menuLeft: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+  groupItemLeftSelected: {
+    backgroundColor: constants.paid,
+    height: 16,
+    width: 16,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 5,
+    borderRadius: 5,
+    border: `1px solid ${constants.paid}`,
   },
-  menuRight: {
-    width: 100,
-    backgroundColor: 'black'
+  groupItemRight: {
+    fontFamily: 'nunito-regular',
+    fontWeight: 'normal',
   },
+  // menus: {
+  //   flex: 1,
+  //   backgroundColor: 'green',
+  //   borderRadius: 10,
+  //   margin: '10px 10px 0px 10px',
+  //   overflowY: 'scroll',
+  // },
+  // menu: {
+  //   display: 'flex',
+  //   flexDirection: 'row',
+  //   margin: 10,
+  //   borderRadius: 5,
+  //   backgroundColor: 'rgba(0,0,0,0.1)',
+  // },
+  // menuLeft: {
+  //   flex: 1,
+  //   display: 'flex',
+  //   flexDirection: 'column',
+  //   alignItems: 'flex-start',
+  // },
+  // menuRight: {
+  //   width: 100,
+  //   backgroundColor: 'black'
+  // },
   menuName: {
     fontFamily: 'nunitosans-light',
     fontSize: 18,
@@ -165,19 +230,7 @@ const styles = ({
     fontFamily: 'nunito-bold',
     fontSize: 16,
   },
-  menuOrdered: {
-    fontFamily: 'varela-round',
-    fontSize: 12,
-    letterSpacing: 1,
-    color: 'white',
-    backgroundColor: constants.reserved,
-    height: 20,
-    borderRadius: 10,
-    padding: '0px 5px 0px 5px',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  menuImage: {
+  image: {
     height: '100%',
     minWidth: '100%',
     position: 'absolute',
@@ -189,8 +242,8 @@ const styles = ({
     margin: 'auto',
   },
   imageContainer: {
-    width: 100,
-    height: 100,
+    width: 192,
+    height: 192,
     position: 'relative',
     zIndex: 1,
     overflow: 'hidden',
@@ -198,6 +251,8 @@ const styles = ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 40,
+    marginTop: 80,
   },
   actionContainer: {
     marginTop: 20,

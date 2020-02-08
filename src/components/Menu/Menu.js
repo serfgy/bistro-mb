@@ -57,12 +57,12 @@ class Menu extends Component {
     console.log('selected item', item);
     if (item.menuType === 'O') {
       const { comboGroups, comboItems } = this.state;
-      const selectedComboGroups = comboGroups.filter(el => el.refMenuId === item.menuId);
-      const selectedComboItems = comboItems.filter(el => el.refMenuId === item.menuId);
+      const availableComboGroups = comboGroups.filter(el => el.refMenuId === item.menuId);
+      const availableComboItems = comboItems.filter(el => el.refMenuId === item.menuId);
       this.setState({
         selectedMenu: item,
-        selectedComboGroups: selectedComboGroups,
-        selectedComboItems: selectedComboItems,
+        availableComboGroups: availableComboGroups,
+        availableComboItems: availableComboItems,
         overlayComboVisible: true,
       });
     } else {
@@ -116,15 +116,50 @@ class Menu extends Component {
       });
   }
 
-  handleUpdateFromOverlayCombo = (item) => {
+  handleUpdateFromOverlayCombo = (items) => {
     const { match } = this.props;
     const { selectedMenu } = this.state;
 
     this.setState({ overlayComboVisible: false })
 
-    if (!item) {
+    if (!items) {
       return;
     }
+
+    let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/openorders/' + match.params.openorderRecKey + '/insert-combo';
+    const body = {
+      openorderRecKey: match.params.openorderRecKey,
+      restmenuRecKey: selectedMenu.recKey,
+      orderQty: 1,
+      itemPayloads: items.map(el => ({
+        combogroupRecKey: el.combogroupRecKey,
+        comboitemRecKey: el.recKey,
+      }))
+    };
+    console.log('testboyd', body);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify(body),
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.log('post insert-combo successful', response);
+        if (response.message) {
+          this.props.handleUpdateFromMenu(response.message)
+          return;
+        }
+        this.setState({
+          openorderInfo: response,
+          openorder: response.openorder,
+          openorderItems: response.openorderItems,
+        })
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   doToOrder() {
@@ -142,7 +177,7 @@ class Menu extends Component {
     const { match, location } = this.props;
     const { openorderInfo, toOrder,
       foldergrps, displays, selectedFoldergrp, selectedMenu, overlayMenuVisible,
-      selectedComboGroups, selectedComboItems, overlayComboVisible } = this.state;
+      availableComboGroups, availableComboItems, overlayComboVisible } = this.state;
     console.log('render menu', openorderInfo);
 
     const params = {
@@ -203,8 +238,8 @@ class Menu extends Component {
             overlayComboVisible &&
             <OverlayCombo
               selectedMenu={selectedMenu}
-              selectedComboGroups={selectedComboGroups}
-              selectedComboItems={selectedComboItems}
+              availableComboGroups={availableComboGroups}
+              availableComboItems={availableComboItems}
               handleUpdateFromOverlayCombo={this.handleUpdateFromOverlayCombo} />
           }
           <div style={styles.leftContainer}>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import constants from '../constants/constants';
 import { AntDesign } from 'react-web-vector-icons';
+import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
 
 class OverlayMenu extends Component {
   constructor(props) {
@@ -11,6 +12,12 @@ class OverlayMenu extends Component {
   }
 
   componentDidMount() {
+    this.targetElement = document.querySelector('#targetElement');
+    disableBodyScroll(this.targetElement);
+  }
+
+  componentWillUnmount() {
+    enableBodyScroll(this.targetElement);
   }
 
   doQtyChange(type) {
@@ -35,37 +42,42 @@ class OverlayMenu extends Component {
     return (
       <div style={styles.overlay} className='disable-double-tap'>
         <div style={styles.overlayContent}>
-          <div style={styles.imageContainer} className='box-shadow'>
-            <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
-          </div>
-          <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
-          <div style={styles.title}>{selectedMenu.menuName}</div>
-          <div style={styles.quantityContainer}>
-            <div style={styles.quantityFirst} className="disable-select"
-              onClick={() => this.doQtyChange('MINUS')}>
-              <AntDesign name='minus' size={32} />
+          <div style={styles.overlayScroll} id='targetElement'>
+            <div style={styles.backButton} onClick={() => this.props.handleUpdateFromOverlayMenu()}>
+              <div style={styles.backButtonText}>BACK</div>
             </div>
-            <div style={styles.quantitySecond}>
-              {modalInputValueQty}
+            <div style={styles.imageContainer} className='box-shadow'>
+              <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
             </div>
-            <div style={styles.quantityThird} className='disable-select'
-              onClick={() => this.doQtyChange('PLUS')}>
-              <AntDesign name='plus' size={32} />
+            <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
+            <div style={styles.title}>{selectedMenu.menuName}</div>
+            <div style={styles.quantityContainer}>
+              <div style={styles.quantityFirst} className="disable-select"
+                onClick={() => this.doQtyChange('MINUS')}>
+                <AntDesign name='minus' size={32} />
+              </div>
+              <div style={styles.quantitySecond}>
+                {modalInputValueQty}
+              </div>
+              <div style={styles.quantityThird} className='disable-select'
+                onClick={() => this.doQtyChange('PLUS')}>
+                <AntDesign name='plus' size={32} />
+              </div>
             </div>
-          </div>
-          <div style={styles.actionContainer}>
-            <div style={styles.action}
-              onClick={() => this.props.handleUpdateFromOverlayMenu()}>
-              <AntDesign name='close' size={64} color={constants.paid} />
-              <div style={styles.actionText}>BACK</div>
+            <div style={styles.actionContainer}>
+              <div style={styles.action}
+                onClick={() => this.props.handleUpdateFromOverlayMenu()}>
+                <AntDesign name='close' size={64} color={constants.paid} />
+                <div style={styles.actionText}>BACK</div>
+              </div>
+              <div style={styles.action}
+                onClick={() => this.props.handleUpdateFromOverlayMenu(modalInputValueQty)}>
+                <AntDesign name='check' size={64} color={constants.vacant} />
+                <div style={styles.actionText}>OK</div>
+              </div>
             </div>
-            <div style={styles.action}
-              onClick={() => this.props.handleUpdateFromOverlayMenu(modalInputValueQty)}>
-              <AntDesign name='check' size={64} color={constants.vacant} />
-              <div style={styles.actionText}>OK</div>
-            </div>
-          </div>
-        </div >
+          </div >
+        </div>
       </div >
     );
   }
@@ -94,8 +106,32 @@ const styles = ({
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
+  },
+  overlayScroll: {
+    overflow: 'scroll',
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    marginTop: 10,
+    height: 50,
+    width: 80,
+    backgroundColor: constants.paid,
+    fontSize: 10,
+    color: 'white',
+    letterSpacing: 2,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    margin: '0px 0px 0px 20px',
   },
   imageContainer: {
     width: 192,
