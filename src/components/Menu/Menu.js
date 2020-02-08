@@ -4,6 +4,12 @@ import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
 import constants from '../constants/constants';
 import logo from '../images/logo.png';
+import BEEF from '../images/beef.png';
+import PORK from '../images/pork.png';
+import VEGETARIAN from '../images/vegetarian.png';
+import SPICY1 from '../images/spicy1.png';
+import SPICY2 from '../images/spicy2.png';
+import SPICY3 from '../images/spicy3.png';
 import OverlayMenu from './OverlayMenu';
 import OverlayCombo from './OverlayCombo';
 
@@ -188,6 +194,22 @@ class Menu extends Component {
     }
   }
 
+  doTranslateImage(item) {
+    if (item === 'BEEF') {
+      return BEEF;
+    } else if (item === 'PORK') {
+      return PORK;
+    } else if (item === 'VEGETARIAN') {
+      return VEGETARIAN;
+    } else if (item === '1') {
+      return SPICY1;
+    } else if (item === '2') {
+      return SPICY2;
+    } else if (item === '3') {
+      return SPICY3;
+    }
+  }
+
   render() {
     const { match, location } = this.props;
     const { language, openorderInfo, toOrder,
@@ -318,10 +340,28 @@ class Menu extends Component {
                       <div style={styles.menuLeft}>
                         <div style={styles.menuName}>{language === 'en' ? item.menuName : item.menuNameLang}</div>
                         <div style={styles.menuPrice}>${item.listPrice}</div>
-                        {
-                          openorderInfo.openorderItems.find(el => el.stkId === item.stkId) &&
-                          <div style={styles.menuOrdered}>ORDERED {this.doCalculateOrderedQty(item)}</div>
-                        }
+                        <div style={{ display: 'flex', flexDirection: 'row' }}>
+                          {
+                            item.contains1 &&
+                            <img height={24} width={24} alt='' src={this.doTranslateImage(item.contains1)} />
+                          }
+                          {
+                            item.contains2 &&
+                            <img height={24} width={24} alt='' src={this.doTranslateImage(item.contains2)} />
+                          }
+                          {
+                            item.contains3 &&
+                            <img height={24} width={24} alt='' src={this.doTranslateImage(item.contains3)} />
+                          }
+                          {
+                            item.spicyFlg !== '0' &&
+                            <img height={24} width={24} alt='' src={this.doTranslateImage(item.spicyFlg)} />
+                          }
+                        </div>
+                        {/* {
+                            openorderInfo.openorderItems.find(el => el.stkId === item.stkId) &&
+                            <div style={styles.menuOrdered}>ORDERED {this.doCalculateOrderedQty(item)}</div>
+                          } */}
                       </div>
                       <div style={styles.menuRight}>
                         <div style={styles.imageContainer}>
