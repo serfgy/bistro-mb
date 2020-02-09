@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import constants from '../constants/constants';
 import { AntDesign } from 'react-web-vector-icons';
 import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
+import BEEF from '../images/beef.png';
+import PORK from '../images/pork.png';
+import VEGAN from '../images/vegan.png';
+import SPICY1 from '../images/spicy1.png';
+import SPICY2 from '../images/spicy2.png';
+import SPICY3 from '../images/spicy3.png';
 
 class OverlayCombo extends Component {
   constructor(props) {
@@ -27,66 +33,175 @@ class OverlayCombo extends Component {
     let itemUpdate = { ...item, combogroupRecKey: group.recKey };
     if (!selectedComboItems.find(el => el.recKey === item.recKey)) {
       selectedComboItemsUpdate.push(itemUpdate);
+    } else {
+      selectedComboItemsUpdate = selectedComboItems.filter(el => el.recKey !== item.recKey);
     }
+
+
     this.setState({
       selectedComboItems: selectedComboItemsUpdate,
     });
   }
 
+  doQtyChange(type) {
+    if (type === 'PLUS') {
+      this.setState((prevState, props) => ({
+        modalInputValueQty: Math.floor(Number(prevState.modalInputValueQty) + 1)
+      }));
+    }
+    else if (type === 'MINUS') {
+      if (this.state.modalInputValueQty <= 1) return;
+      this.setState((prevState, props) => ({
+        modalInputValueQty: Math.ceil(Number(prevState.modalInputValueQty) - 1)
+      }));
+    }
+  }
+
+  doTranslateImage(item) {
+    if (item === 'BEEF') {
+      return BEEF;
+    } else if (item === 'PORK') {
+      return PORK;
+    } else if (item === 'VEGAN') {
+      return VEGAN;
+    } else if (item === '1') {
+      return SPICY1;
+    } else if (item === '2') {
+      return SPICY2;
+    } else if (item === '3') {
+      return SPICY3;
+    }
+  }
+
+  doTranslateImageText(item) {
+    const { language } = this.props;
+    if (language !== 'en') {
+      if (item === 'BEEF') {
+        return '含有牛肉';
+      } else if (item === 'PORK') {
+        return '含有猪肉';
+      } else if (item === 'VEGAN') {
+        return '素食';
+      } else if (item === '1') {
+        return '微辣';
+      } else if (item === '2') {
+        return '中辣';
+      } else if (item === '3') {
+        return '特辣';
+      }
+    } else {
+      if (item === 'BEEF') {
+        return 'Contains Beef';
+      } else if (item === 'PORK') {
+        return 'Contains Pork';;
+      } else if (item === 'VEGAN') {
+        return 'Vegetarian';;
+      } else if (item === '1') {
+        return 'Mild Spicy';
+      } else if (item === '2') {
+        return 'Medium Spicy';
+      } else if (item === '3') {
+        return 'Very Spicy';
+      }
+    }
+  }
+
   render() {
-    const { selectedMenu, availableComboGroups, availableComboItems, } = this.props;
-    const { selectedComboItems } = this.state;
+    const { language, selectedMenu, availableComboGroups, availableComboItems, } = this.props;
+    const { modalInputValueQty, selectedComboItems } = this.state;
     console.log('render overlaycombo', selectedComboItems);
 
     return (
       <div style={styles.overlay} className='disable-double-tap'>
         <div style={styles.overlayContent}>
           <div style={styles.overlayScroll} id='targetElement'>
-            <div style={styles.backButton} onClick={() => this.props.handleUpdateFromOverlayCombo()}>
-              <div style={styles.backButtonText}>BACK</div>
-            </div>
-            <div style={styles.menuContainer}>
-              <div style={styles.imageContainer} className='box-shadow'>
-                <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
+            <div style={styles.headerContainer}>
+              <div style={styles.header} onClick={() => this.props.handleUpdateFromOverlayCombo()}>
+                <AntDesign name='left' size={16} color='white' />
               </div>
-              <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
-              <div style={styles.title}>{selectedMenu.menuName}</div>
             </div>
-            {
-              availableComboGroups && availableComboGroups.map(el => (
-                <div style={styles.groupContainer} key={el.recKey}>
-                  <div style={styles.groupTitle}>{el.groupName}</div>
-                  <div style={styles.groupItems}>
-                    {
-                      availableComboItems && availableComboItems.filter(item => item.groupNo === el.groupNo).map(item => (
-                        <div style={styles.groupItem}
-                          key={item.recKey}
-                          onClick={() => this.doSelectComboItem(el, item)}>
-                          {
-                            selectedComboItems.find(obj => obj.recKey === item.recKey) ?
-                              <div style={styles.groupItemLeftSelected}></div>
-                              :
-                              <div style={styles.groupItemLeft}></div>
-                          }
-                          <div style={styles.groupItemRight}>{item.menuName}</div>
-                        </div>
-                      ))
-                    }
-                  </div>
+
+            <div style={styles.title}>{selectedMenu.menuName}</div>
+            <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
+            <div style={styles.imageContainer}>
+              <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
+            </div>
+            <div style={styles.containsContainer}>
+              {
+                selectedMenu.contains1 &&
+                <div style={styles.containsRow}>
+                  <img height={24} width={24} alt='' src={this.doTranslateImage(selectedMenu.contains1)} />
+                  <div style={{ marginLeft: 10 }}>{this.doTranslateImageText(selectedMenu.contains1)}</div>
                 </div>
-              ))
-            }
-            <div style={styles.actionContainer}>
-              <div style={styles.action}
-                onClick={() => this.props.handleUpdateFromOverlayCombo()}>
-                <AntDesign name='close' size={64} color={constants.paid} />
-                <div style={styles.actionText}>BACK</div>
+              }
+              {
+                selectedMenu.contains2 &&
+                <div style={styles.containsRow}>
+                  <img height={24} width={24} alt='' src={this.doTranslateImage(selectedMenu.contains2)} />
+                  <div style={{ marginLeft: 10 }}>{this.doTranslateImageText(selectedMenu.contains2)}</div>
+                </div>
+              }
+              {
+                selectedMenu.contains3 &&
+                <div style={styles.containsRow}>
+                  <img height={24} width={24} alt='' src={this.doTranslateImage(selectedMenu.contains3)} />
+                  <div style={{ marginLeft: 10 }}>{this.doTranslateImageText(selectedMenu.contains3)}</div>
+                </div>
+              }
+              {
+                selectedMenu.spicyFlg !== '0' &&
+                <div style={styles.containsRow}>
+                  <img height={24} width={24} alt='' src={this.doTranslateImage(selectedMenu.spicyFlg)} />
+                  <div style={{ marginLeft: 10 }}>{this.doTranslateImageText(selectedMenu.spicyFlg)}</div>
+                </div>
+              }
+            </div>
+            <div style={styles.quantityContainer}>
+              <div style={styles.quantityFirst} className="disable-select"
+                onClick={() => this.doQtyChange('MINUS')}>
+                <AntDesign name='minus' size={32} />
               </div>
-              <div style={styles.action}
-                onClick={() => this.props.handleUpdateFromOverlayCombo(selectedComboItems)}>
-                <AntDesign name='check' size={64} color={constants.vacant} />
-                <div style={styles.actionText}>OK</div>
+              <div style={styles.quantitySecond}>
+                {modalInputValueQty}
               </div>
+              <div style={styles.quantityThird} className='disable-select'
+                onClick={() => this.doQtyChange('PLUS')}>
+                <AntDesign name='plus' size={32} />
+              </div>
+            </div>
+            <div style={styles.modifierContainer}>
+
+              {
+                availableComboGroups && availableComboGroups.map(el => (
+                  <div style={styles.groupContainer} key={el.recKey}>
+                    <div style={styles.groupTitle}>{el.groupName}</div>
+                    <div style={styles.groupItems}>
+                      {
+                        availableComboItems && availableComboItems.filter(item => item.groupNo === el.groupNo).map(item => (
+                          <div style={styles.groupItem}
+                            key={item.recKey}
+                            onClick={() => this.doSelectComboItem(el, item)}>
+                            {
+                              selectedComboItems.find(obj => obj.recKey === item.recKey) ?
+                                <div style={styles.groupItemLeftSelected}></div>
+                                :
+                                <div style={styles.groupItemLeft}></div>
+                            }
+                            <div style={styles.groupItemRight}>{item.menuName}</div>
+                          </div>
+                        ))
+                      }
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+            <div style={styles.remarksContainer}>
+              {selectedMenu.remark}
+            </div>
+            <div style={styles.button} className='bg-brand'
+              onClick={() => this.props.handleUpdateFromOverlayCombo(selectedComboItems)}>
+              {language === 'en' ? 'ADD TO ORDER' : '加入点单'}
             </div>
           </div >
         </div>
@@ -97,7 +212,7 @@ class OverlayCombo extends Component {
 
 const styles = ({
   overlay: {
-    backgroundColor: 'rgba(255,255,255,0.95)',
+    backgroundColor: 'white',
     position: 'fixed',
     zIndex: 2,
     top: 0,
@@ -121,48 +236,93 @@ const styles = ({
   },
   overlayScroll: {
     overflow: 'scroll',
+    // display: 'flex',
+    // flex: 1,
+    flexDirection: 'column',
+  },
+  headerContainer: {
+    // backgroundColor: 'red'
+  },
+  header: {
+    margin: '10px 0px 0px 10px',
+    width: 50,
+    height: 80,
+    backgroundColor: constants.brand,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     position: 'relative',
   },
-  backButton: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
+  title: {
+    paddingHorizontal: 20,
+    textAlign: 'center',
+    fontFamily: 'nunitosans-regular',
+    fontSize: 24,
+  },
+  remarksContainer: {
+    margin: '10px 20px 10px 20px',
+    fontFamily: 'nunito-light',
+    fontSize: 14,
+    color: constants.grey4,
+  },
+  containsContainer: {
     marginTop: 10,
-    height: 50,
-    width: 80,
-    backgroundColor: constants.paid,
-    fontSize: 10,
-    color: 'white',
-    letterSpacing: 2,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    margin: '0px 0px 0px 20px',
-  },
-  menuContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  title: {
-    margin: '0px 20px 0px 20px',
+  containsRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    fontFamily: 'nunitosans-regular',
+    color: constants.grey1,
+  },
+  modifierContainer: {
+
+  },
+  quantityContainer: {
+    margin: 'auto',
+    height: 80,
+    width: 300,
+    // backgroundColor: 'orange',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantityFirst: {
+    flex: 1,
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantitySecond: {
+    flex: 1,
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
     fontFamily: 'nunitosans-semibold',
-    fontWeight: 'bold',
-    fontSize: 24,
+    fontSize: 48,
+  },
+  quantityThird: {
+    flex: 1,
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   groupContainer: {
     margin: '20px 0px 20px 0px',
-    backgroundColor: 'pink',
+    // backgroundColor: 'pink',
     // height: 400,
   },
   groupTitle: {
     margin: '20px 0px 0px 20px',
-    fontFamily: 'nunito-bold',
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontFamily: 'nunitosans-light',
+    fontSize: 18,
+    color: constants.brand,
   },
   groupItems: {
     // backgroundColor: 'orange',
@@ -172,7 +332,7 @@ const styles = ({
     display: 'flex',
     flexDirection: 'row',
     // backgroundColor: 'purple',
-    margin: '0px 0px 20px 0px',
+    margin: '10px 0px 10px 0px',
     alignItems: 'center',
   },
   groupItemLeft: {
@@ -181,54 +341,25 @@ const styles = ({
     width: 16,
     marginLeft: 10,
     marginRight: 10,
-    borderRadius: 5,
-    border: `1px solid ${constants.paid}`,
+    border: `1px solid ${constants.brand}`,
   },
   groupItemLeftSelected: {
-    backgroundColor: constants.paid,
+    backgroundColor: constants.brand,
     height: 16,
     width: 16,
     marginLeft: 10,
     marginRight: 10,
-    borderRadius: 5,
-    borderRadius: 5,
-    border: `1px solid ${constants.paid}`,
+    border: `1px solid ${constants.brand}`,
   },
   groupItemRight: {
     fontFamily: 'nunito-regular',
     fontWeight: 'normal',
   },
-  // menus: {
-  //   flex: 1,
-  //   backgroundColor: 'green',
-  //   borderRadius: 10,
-  //   margin: '10px 10px 0px 10px',
-  //   overflowY: 'scroll',
-  // },
-  // menu: {
-  //   display: 'flex',
-  //   flexDirection: 'row',
-  //   margin: 10,
-  //   borderRadius: 5,
-  //   backgroundColor: 'rgba(0,0,0,0.1)',
-  // },
-  // menuLeft: {
-  //   flex: 1,
-  //   display: 'flex',
-  //   flexDirection: 'column',
-  //   alignItems: 'flex-start',
-  // },
-  // menuRight: {
-  //   width: 100,
-  //   backgroundColor: 'black'
-  // },
-  menuName: {
-    fontFamily: 'nunitosans-light',
-    fontSize: 18,
-  },
   menuPrice: {
+    textAlign: 'center',
     fontFamily: 'nunito-bold',
     fontSize: 16,
+    marginBottom: 10,
   },
   image: {
     height: '100%',
@@ -242,6 +373,7 @@ const styles = ({
     margin: 'auto',
   },
   imageContainer: {
+    margin: 'auto',
     width: 192,
     height: 192,
     position: 'relative',
@@ -251,31 +383,18 @@ const styles = ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 40,
-    marginTop: 80,
   },
-  actionContainer: {
-    marginTop: 20,
+  button: {
+    // backgroundColor: constants.paid,
+    margin: '10px 10px 20px 10px',
+    height: 80,
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  action: {
-    height: 100,
-    width: 100,
-    margin: 20,
-    // backgroundColor: 'blue',
-    display: 'flex',
-    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  actionText: {
-    fontSize: 12,
+    fontFamily: 'varela-round',
     letterSpacing: 2,
-    fontFamily: 'nunito-semibold',
-  },
+    color: 'white',
+  }
 });
 
 export default OverlayCombo;

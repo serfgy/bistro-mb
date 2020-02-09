@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import constants from '../constants/constants';
 import { AntDesign } from 'react-web-vector-icons';
 import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
+import BEEF from '../images/beef.png';
+import PORK from '../images/pork.png';
+import VEGAN from '../images/vegan.png';
+import SPICY1 from '../images/spicy1.png';
+import SPICY2 from '../images/spicy2.png';
+import SPICY3 from '../images/spicy3.png';
 
 class OverlayMenu extends Component {
   constructor(props) {
@@ -34,8 +40,57 @@ class OverlayMenu extends Component {
     }
   }
 
+  doTranslateImage(item) {
+    if (item === 'BEEF') {
+      return BEEF;
+    } else if (item === 'PORK') {
+      return PORK;
+    } else if (item === 'VEGAN') {
+      return VEGAN;
+    } else if (item === '1') {
+      return SPICY1;
+    } else if (item === '2') {
+      return SPICY2;
+    } else if (item === '3') {
+      return SPICY3;
+    }
+  }
+
+  doTranslateImageText(item) {
+    const { language } = this.props;
+    if (language !== 'en') {
+      if (item === 'BEEF') {
+        return '含有牛肉';
+      } else if (item === 'PORK') {
+        return '含有猪肉';
+      } else if (item === 'VEGAN') {
+        return '素食';
+      } else if (item === '1') {
+        return '微辣';
+      } else if (item === '2') {
+        return '中辣';
+      } else if (item === '3') {
+        return '特辣';
+      }
+    } else {
+      if (item === 'BEEF') {
+        return 'Contains Beef';
+      } else if (item === 'PORK') {
+        return 'Contains Pork';;
+      } else if (item === 'VEGAN') {
+        return 'Vegetarian';;
+      } else if (item === '1') {
+        return 'Mild Spicy';
+      } else if (item === '2') {
+        return 'Medium Spicy';
+      } else if (item === '3') {
+        return 'Very Spicy';
+      }
+    }
+  }
+
   render() {
-    const { selectedMenu } = this.props;
+    const { language, selectedMenu } = this.props;
     const { modalInputValueQty } = this.state;
     console.log('render overlaymenu', selectedMenu);
 
@@ -43,14 +98,47 @@ class OverlayMenu extends Component {
       <div style={styles.overlay} className='disable-double-tap'>
         <div style={styles.overlayContent}>
           <div style={styles.overlayScroll} id='targetElement'>
-            <div style={styles.backButton} onClick={() => this.props.handleUpdateFromOverlayMenu()}>
-              <div style={styles.backButtonText}>BACK</div>
+            <div style={styles.headerContainer}>
+              <div style={styles.header} onClick={() => this.props.handleUpdateFromOverlayMenu()}>
+                <AntDesign name='left' size={16} color='white' />
+              </div>
             </div>
-            <div style={styles.imageContainer} className='box-shadow'>
+
+            <div style={styles.title}>{selectedMenu.menuName}</div>
+            <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
+            <div style={styles.imageContainer}>
               <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
             </div>
-            <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
-            <div style={styles.title}>{selectedMenu.menuName}</div>
+            <div style={styles.containsContainer}>
+              {
+                selectedMenu.contains1 &&
+                <div style={styles.containsRow}>
+                  <img height={24} width={24} alt='' src={this.doTranslateImage(selectedMenu.contains1)} />
+                  <div style={{ marginLeft: 10 }}>{this.doTranslateImageText(selectedMenu.contains1)}</div>
+                </div>
+              }
+              {
+                selectedMenu.contains2 &&
+                <div style={styles.containsRow}>
+                  <img height={24} width={24} alt='' src={this.doTranslateImage(selectedMenu.contains2)} />
+                  <div style={{ marginLeft: 10 }}>{this.doTranslateImageText(selectedMenu.contains2)}</div>
+                </div>
+              }
+              {
+                selectedMenu.contains3 &&
+                <div style={styles.containsRow}>
+                  <img height={24} width={24} alt='' src={this.doTranslateImage(selectedMenu.contains3)} />
+                  <div style={{ marginLeft: 10 }}>{this.doTranslateImageText(selectedMenu.contains3)}</div>
+                </div>
+              }
+              {
+                selectedMenu.spicyFlg !== '0' &&
+                <div style={styles.containsRow}>
+                  <img height={24} width={24} alt='' src={this.doTranslateImage(selectedMenu.spicyFlg)} />
+                  <div style={{ marginLeft: 10 }}>{this.doTranslateImageText(selectedMenu.spicyFlg)}</div>
+                </div>
+              }
+            </div>
             <div style={styles.quantityContainer}>
               <div style={styles.quantityFirst} className="disable-select"
                 onClick={() => this.doQtyChange('MINUS')}>
@@ -64,17 +152,15 @@ class OverlayMenu extends Component {
                 <AntDesign name='plus' size={32} />
               </div>
             </div>
-            <div style={styles.actionContainer}>
-              <div style={styles.action}
-                onClick={() => this.props.handleUpdateFromOverlayMenu()}>
-                <AntDesign name='close' size={64} color={constants.paid} />
-                <div style={styles.actionText}>BACK</div>
-              </div>
-              <div style={styles.action}
-                onClick={() => this.props.handleUpdateFromOverlayMenu(modalInputValueQty)}>
-                <AntDesign name='check' size={64} color={constants.vacant} />
-                <div style={styles.actionText}>OK</div>
-              </div>
+            <div style={styles.modifierContainer}>
+
+            </div>
+            <div style={styles.remarksContainer}>
+              {selectedMenu.remark}
+            </div>
+            <div style={styles.button} className='bg-brand'
+              onClick={() => this.props.handleUpdateFromOverlayMenu(modalInputValueQty)}>
+              {language === 'en' ? 'ADD TO ORDER' : '加入点单'}
             </div>
           </div >
         </div>
@@ -85,7 +171,7 @@ class OverlayMenu extends Component {
 
 const styles = ({
   overlay: {
-    backgroundColor: 'rgba(255,255,255,0.95)',
+    backgroundColor: 'white',
     position: 'fixed',
     zIndex: 2,
     top: 0,
@@ -109,31 +195,26 @@ const styles = ({
   },
   overlayScroll: {
     overflow: 'scroll',
+    // display: 'flex',
+    // flex: 1,
+    flexDirection: 'column',
+  },
+  headerContainer: {
+
+  },
+  header: {
+    margin: '10px 0px 0px 10px',
+    width: 50,
+    height: 80,
+    backgroundColor: constants.brand,
     display: 'flex',
-    flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    marginTop: 10,
-    height: 50,
-    width: 80,
-    backgroundColor: constants.paid,
-    fontSize: 10,
-    color: 'white',
-    letterSpacing: 2,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    margin: '0px 0px 0px 20px',
+    position: 'relative',
   },
   imageContainer: {
+    margin: 'auto',
     width: 192,
     height: 192,
     position: 'relative',
@@ -143,7 +224,6 @@ const styles = ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 40,
   },
   image: {
     height: '100%',
@@ -163,30 +243,45 @@ const styles = ({
     fontSize: 24,
   },
   menuPrice: {
+    textAlign: 'center',
     fontFamily: 'nunito-bold',
     fontSize: 16,
+    marginBottom: 10,
   },
-  actionContainer: {
-    marginTop: 40,
+  button: {
+    // backgroundColor: constants.paid,
+    margin: '10px 10px 20px 10px',
+    height: 80,
     display: 'flex',
-    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'varela-round',
+    letterSpacing: 2,
+    color: 'white',
   },
-  action: {
-    height: 100,
-    width: 100,
-    margin: 20,
-    // backgroundColor: 'blue',
+  remarksContainer: {
+    margin: '10px 20px 10px 20px',
+    fontFamily: 'nunito-light',
+    fontSize: 14,
+    color: constants.grey4,
+  },
+  containsContainer: {
+    marginTop: 10,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  actionText: {
-    fontSize: 12,
-    letterSpacing: 2,
-    fontFamily: 'nunito-semibold',
+  containsRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    fontFamily: 'nunitosans-regular',
+    color: constants.grey1,
+  },
+  modifierContainer: {
+
   },
   quantityContainer: {
+    margin: 'auto',
     height: 80,
     width: 300,
     // backgroundColor: 'orange',

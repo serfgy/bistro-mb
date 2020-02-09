@@ -6,7 +6,7 @@ import constants from '../constants/constants';
 import logo from '../images/logo.png';
 import BEEF from '../images/beef.png';
 import PORK from '../images/pork.png';
-import VEGETARIAN from '../images/vegetarian.png';
+import VEGAN from '../images/vegan.png';
 import SPICY1 from '../images/spicy1.png';
 import SPICY2 from '../images/spicy2.png';
 import SPICY3 from '../images/spicy3.png';
@@ -199,8 +199,8 @@ class Menu extends Component {
       return BEEF;
     } else if (item === 'PORK') {
       return PORK;
-    } else if (item === 'VEGETARIAN') {
-      return VEGETARIAN;
+    } else if (item === 'VEGAN') {
+      return VEGAN;
     } else if (item === '1') {
       return SPICY1;
     } else if (item === '2') {
@@ -218,10 +218,10 @@ class Menu extends Component {
     console.log('render menu', openorderInfo);
 
     const params = {
-      autoplay: {
-        delay: 2500,
-        disableOnInteraction: false
-      },
+      // autoplay: {
+        // delay: 2500,
+        // disableOnInteraction: false
+      // },
       pagination: {
         el: '.swiper-pagination',
         clickable: true
@@ -296,12 +296,14 @@ class Menu extends Component {
           {
             overlayMenuVisible &&
             <OverlayMenu
+              language={language}
               selectedMenu={selectedMenu}
               handleUpdateFromOverlayMenu={this.handleUpdateFromOverlayMenu} />
           }
           {
             overlayComboVisible &&
             <OverlayCombo
+              language={language}
               selectedMenu={selectedMenu}
               availableComboGroups={availableComboGroups}
               availableComboItems={availableComboItems}
@@ -323,6 +325,7 @@ class Menu extends Component {
                 </div>
               ))
             }
+            <div style={{ width: 60, height: 4, borderRadius: 3, backgroundColor: 'rgba(66,69,73,0.1)', margin: 'auto', marginBottom: 20  }}></div>
           </div>
           {
             selectedFoldergrp && openorderInfo &&
@@ -372,6 +375,7 @@ class Menu extends Component {
                     </div>
                   ))
                 }
+                <div style={{ width: 60, height: 4, borderRadius: 3, backgroundColor: 'rgba(66,69,73,0.1)', margin: 'auto', marginBottom: 20 }}></div>
               </div>
             </div>
           }

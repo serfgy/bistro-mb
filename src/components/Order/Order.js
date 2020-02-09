@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import moment from 'moment';
 import constants from '../constants/constants';
 import { AntDesign } from 'react-web-vector-icons';
 
@@ -137,43 +138,31 @@ class Order extends Component {
           }
           <div style={styles.header} className='bg-brand'>
             <div style={styles.headerFirst}>ITEMS</div>
-            <div style={styles.headerSecond}>{openorderInfo.openorderItems.length}</div>
-            <div style={styles.alertCircle} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-none'}`}></div>
+            <div style={styles.headerSecond}>{openorderInfo.openorderItems.filter(el => !el.refRecKey).length}</div>
+            <div style={styles.alertCircle} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N' && !el.refRecKey)) ? 'bg-paid' : 'bg-none'}`}></div>
           </div>
         </div>
-        <div style={styles.headerContainer}>
-          <div style={styles.headerColumn}>
-            <div style={styles.header}>
-              <div style={styles.headerFirst}>GUEST</div>
-              <div style={styles.headerSecond}>{openorderInfo && (openorderInfo.openorder.vipName || 'Guest')}</div>
-            </div>
-            <div style={styles.header}>
-              <div style={styles.headerFirst}>ORDER</div>
-              <div style={styles.headerSecond}>#{openorderInfo && openorderInfo.openorder.recKey}</div>
-            </div>
-          </div>
-          <div style={styles.headerColumn}>
-            <div style={styles.header}>
-              <div style={styles.headerFirst}>TABLE</div>
-              <div style={styles.headerSecond}>{openorderInfo && (openorderInfo.openorder.tableId || '-')}</div>
-            </div>
-            <div style={styles.header}>
-              <div style={styles.headerFirst}>TOTAL</div>
-              <div style={styles.headerSecond}>${openorderInfo && openorderInfo.openorder.grandTotal.toFixed(2)}</div>
-            </div>
-          </div>
-        </div>
-        <div style={styles.subtitle}>订单</div>
-        <div style={styles.title}>Your Order</div>
-        <div style={styles.subsubtitle}>You have <span style={{ fontSize: 20, color: constants.paid }}>{openorderInfo && openorderInfo.openorderItems.filter(el => el.confirmFlg === 'N').length}</span> unsubmitted item(s) in your order.</div>
+        {
+          language == 'en' ?
+            <div style={styles.subtitle}>{moment(openorderInfo.openorder.seatTime).format('HH:mm')}</div>
+            :
+            <div style={styles.subtitle}>{moment(openorderInfo.openorder.seatTime).format('HH:mm')}</div>
+        }
+        <div style={styles.title}>{language === 'en' ? 'Order' : '点单'} #{openorderInfo.openorder.recKey}</div>
+        {
+          language === 'en' ?
+            <div style={styles.subsubtitle}>You have <span style={{ color: constants.paid }}>{openorderInfo && openorderInfo.openorderItems.filter(el => el.confirmFlg === 'N' && !el.refRecKey).length}</span> unsubmitted item(s) in your order.</div>
+            :
+            <div style={styles.subsubtitle}>你有 <span style={{ color: constants.paid }}>{openorderInfo && openorderInfo.openorderItems.filter(el => el.confirmFlg === 'N' && !el.refRecKey).length}</span> 件未确认项目。</div>
+        }
         <div style={styles.ordersContainer}>
           <div style={{ display: 'flex', flexDirection: 'row', margin: '0px 20px 0px 10px' }}>
             <div style={{ width: 40, height: '100%' }}></div>
-            <div style={{ width: 60, textAlign: 'center', letterSpacing: 2, color: constants.grey1, fontFamily: 'nunito-semibold', fontSize: 12, }}>
-              QTY
+            <div style={{ width: 60, textAlign: 'center', letterSpacing: 2, color: constants.brand, fontFamily: 'nunito-semibold', fontSize: 12, }}>
+              {language === 'en' ? 'QTY' : '数量'}
             </div>
-            <div style={{ flex: 1, letterSpacing: 2, color: constants.grey1, fontFamily: 'nunito-semibold', fontSize: 12, }}>ITEM</div>
-            <div style={{ width: 100, textAlign: 'right', letterSpacing: 2, color: constants.grey1, fontFamily: 'nunito-semibold', fontSize: 12 }}>TOTAL</div>
+            <div style={{ flex: 1, letterSpacing: 2, color: constants.brand, fontFamily: 'nunito-semibold', fontSize: 12, }}>{language === 'en' ? 'ITEM' : '项目'}</div>
+            <div style={{ width: 100, textAlign: 'right', letterSpacing: 2, color: constants.brand, fontFamily: 'nunito-semibold', fontSize: 12 }}>{language === 'en' ? 'TOTAL' : '小计'}</div>
           </div>
           {
             openorderInfo && openorderInfo.openorderItems && openorderInfo.openorderItems.map(item => {
@@ -185,7 +174,7 @@ class Order extends Component {
                     <div style={styles.detailContainer}>
                       <div style={styles.detailContainerFirst}></div>
                       <div style={styles.detailContainerSecond}>- {item.menuName}</div>
-                      <div style={styles.detailContainerThird}></div>
+                      <div style={styles.detailContainerThird}>${item.lineTotal.toFixed(2)}</div>
                     </div>
                   </div>
                 )
@@ -217,7 +206,7 @@ class Order extends Component {
           openorderInfo &&
           <div style={styles.button} className={openorderInfo.openorderItems.find(el => el.confirmFlg === 'N') ? 'bg-brand' : 'bg-grey'}
             onClick={() => this.doSubmitOpenorder()}>
-            SUBMIT
+            {language === 'en' ? 'SEND TO KITCHEN' : '送去厨房'}
           </div>
         }
       </div>
@@ -308,9 +297,8 @@ const styles = ({
     fontSize: 36,
   },
   subtitle: {
-    margin: '20px 0px 0px 20px',
-    fontFamily: 'nunitosans-regular',
-    letterSpacing: 2,
+    margin: '40px 0px 0px 20px',
+    fontFamily: 'nunito-regular',
     fontSize: 16,
   },
   subsubtitle: {
@@ -362,7 +350,7 @@ const styles = ({
   },
   button: {
     // backgroundColor: constants.paid,
-    margin: 10,
+    margin: '10px 10px 20px 10px',
     height: 80,
     display: 'flex',
     alignItems: 'center',
