@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Fingerprint2 from 'fingerprintjs2';
 import constants from '../constants/constants';
+import logo from '../images/logo.png';
+import splash from '../images/splash.jpg';
 
 class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      language: props.language,
       fingerprint: '',
       ready: false,
       toMenu: false,
@@ -155,14 +158,33 @@ class Register extends Component {
       });
   }
 
+  doToggleLanguage() {
+    const { language } = this.state;
+    if (language === 'en') {
+      this.setState({
+        language: 'zh',
+      })
+    } else {
+      this.setState({
+        language: 'en',
+      })
+    }
+  }
+
+  doCalculateTotalItems() {
+    const { openorderInfo } = this.state;
+    return openorderInfo.openorderItems.filter(el => !el.refRecKey).reduce((a, b) => a + b.orderQty, 0);
+  }
+
   render() {
-    const { fingerprint, ready, pax, name, toMenu, toMenuKey, masters } = this.state;
+    const { fingerprint, ready, pax, name, toMenu, toMenuKey, masters, openorderInfo, language } = this.state;
     console.log('render register');
 
     if (toMenu) {
       return <Redirect to={{
         pathname: '/menu/' + toMenuKey,
         state: {
+          language: language,
           masters: masters,
         }
       }} />
@@ -171,50 +193,62 @@ class Register extends Component {
     if (ready) {
       return (
         <div style={styles.container}>
+          <img alt='' style={styles.splashImage} src={splash} />
           <div style={styles.headerContainer}>
-            <div style={styles.header}>
-              <div style={styles.headerFirst}>TABLE</div>
-              <div style={styles.headerSecond}>{this.props.match.params.tableId}</div>
+            <div style={styles.headerAbsolute}>
+              <img alt='' style={styles.logoImage} src={logo} />
             </div>
-            <div style={styles.header}>
-              <div style={styles.headerFirst}>ITEMS</div>
-              <div style={styles.headerSecond}>-</div>
+            <div style={styles.headerAbsolute2} onClick={() => this.doToggleLanguage()}>
+              <div style={styles.headerFirst}>{language === 'en' ? 'EN' : 'ZH'}</div>
+              <div style={styles.headerSecond}>{language === 'en' ? '英' : '中'}</div>
             </div>
-            <div style={styles.header}>
-              <div style={styles.headerFirst}>TOTAL</div>
-              <div style={styles.headerSecond}>$-</div>
+            <div style={styles.headerReverse}
+              onClick={() => this.doToOrder()}>
+              <div style={styles.headerFirst}>{openorderInfo.openorder.vipName || 'GUEST'}</div>
+              <div style={styles.headerSecond}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
+            </div>
+            {
+              openorderInfo.openorder.tableId &&
+              <div style={styles.header} className='bg-dark'
+                onClick={() => this.doToOrder()}>
+                <div style={styles.headerFirst}>{language === 'en' ? 'TABLE' : '桌号'}</div>
+                <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
+              </div>
+            }
+            <div style={styles.header} className='bg-brand'>
+              <div style={styles.headerFirst}>{language === 'en' ? 'ITEMS' : '项目'}</div>
+              <div style={styles.headerSecond}>{this.doCalculateTotalItems()}</div>
+              <div style={styles.alertCircle} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-none'}`}></div>
             </div>
           </div>
-
           <div style={styles.bodyContainer}>
-            <div>{fingerprint}</div>
-            <div style={styles.inputTitle}>ENTER NAME</div>
+            {/* <div>{fingerprint}</div> */}
+            <div style={styles.inputTitle}>{language === 'en' ? 'ENTER NAME' : '输入姓名'}</div>
             <input style={styles.nameInputText} type='text' spellCheck='false'
               value={name}
               placeholder='Guest'
               onChange={e => this.setState({ name: e.target.value })}
               onFocus={e => e.target.select()} />
 
-            <div style={styles.inputTitle}>SELECT PAX</div>
+            <div style={styles.inputTitle}>{language === 'en' ? 'SELECT PAX' : '选择人数'}</div>
             <div style={styles.paxInputText}>{pax}</div>
-
             <div style={styles.paxButtons}>
-              <div style={styles.paxButton} className={`${pax === 1 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 1 })}>1</div>
-              <div style={styles.paxButton} className={`${pax === 2 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 2 })}>2</div>
-              <div style={styles.paxButton} className={`${pax === 3 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 3 })}>3</div>
-              <div style={styles.paxButton} className={`${pax === 4 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 4 })}>4</div>
+              <div style={styles.paxButton} className={`${pax === 1 ? 'bg-brand text-light' : 'bg-light text-dark'}`} onClick={() => this.setState({ pax: 1 })}>1</div>
+              <div style={styles.paxButton} className={`${pax === 2 ? 'bg-brand text-light' : 'bg-light text-dark'}`} onClick={() => this.setState({ pax: 2 })}>2</div>
+              <div style={styles.paxButton} className={`${pax === 3 ? 'bg-brand text-light' : 'bg-light text-dark'}`} onClick={() => this.setState({ pax: 3 })}>3</div>
+              <div style={styles.paxButton} className={`${pax === 4 ? 'bg-brand text-light' : 'bg-light text-dark'}`} onClick={() => this.setState({ pax: 4 })}>4</div>
             </div>
             <div style={styles.paxButtons}>
-              <div style={styles.paxButton} className={`${pax === 5 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 5 })}>5</div>
-              <div style={styles.paxButton} className={`${pax === 6 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 6 })}>6</div>
-              <div style={styles.paxButton} className={`${pax === 7 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 7 })}>7</div>
-              <div style={styles.paxButton} className={`${pax === 8 && 'bg-dark text-light'}`} onClick={() => this.setState({ pax: 8 })}>8</div>
+              <div style={styles.paxButton} className={`${pax === 5 ? 'bg-brand text-light' : 'bg-light text-dark'}`} onClick={() => this.setState({ pax: 5 })}>5</div>
+              <div style={styles.paxButton} className={`${pax === 6 ? 'bg-brand text-light' : 'bg-light text-dark'}`} onClick={() => this.setState({ pax: 6 })}>6</div>
+              <div style={styles.paxButton} className={`${pax === 7 ? 'bg-brand text-light' : 'bg-light text-dark'}`} onClick={() => this.setState({ pax: 7 })}>7</div>
+              <div style={styles.paxButton} className={`${pax === 8 ? 'bg-brand text-light' : 'bg-light text-dark'}`} onClick={() => this.setState({ pax: 8 })}>8</div>
             </div>
           </div>
 
           <div style={styles.button}
             onClick={() => this.doUpdateOpenorder()}>
-            START
+            {language === 'en' ? 'START' : '开始'}
           </div>
         </div >
       );
@@ -233,30 +267,93 @@ const styles = ({
     bottom: 0,
     display: 'flex',
     flexDirection: 'column',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    overflow: 'hidden',
+  },
+  splashImage: {
+    height: '100%',
+    minWidth: '100%',
+    position: 'absolute',
+    zIndex: -1,
+    top: '-9999px',
+    bottom: '-9999px',
+    left: '-9999px',
+    right: '-9999px',
+    margin: 'auto',
+  },
+  logoImage: {
+    height: '100%',
+    minWidth: '100%',
+    position: 'absolute',
+    // zIndex: -1,
+    top: '-9999px',
+    bottom: '-9999px',
+    left: '-9999px',
+    right: '-9999px',
+    margin: 'auto',
   },
   headerContainer: {
     display: 'flex',
-    margin: '0px 10px 0px 10px',
+    margin: '10px 10px 0px 10px',
     height: 80,
     justifyContent: 'flex-end',
   },
   header: {
-    backgroundColor: constants.grey1,
     marginLeft: 10,
     width: 50,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
+  },
+  headerAbsolute: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    width: 50,
+    height: 80,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  headerAbsolute2: {
+    position: 'absolute',
+    top: 10,
+    left: 70,
+    width: 50,
+    height: 80,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
   headerFirst: {
     fontSize: 10,
     color: 'white',
     letterSpacing: 2,
+    textTransform: 'uppercase',
   },
   headerSecond: {
     fontSize: 16,
     color: 'white',
+  },
+  headerReverse: {
+    marginLeft: 10,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  headerFirstReverse: {
+    fontSize: 10,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  headerSecondReverse: {
+    fontSize: 16,
   },
   bodyContainer: {
     flex: 1,
@@ -265,9 +362,9 @@ const styles = ({
     justifyContent: 'center'
   },
   button: {
-    backgroundColor: constants.grey1,
-    margin: 20,
-    height: 60,
+    backgroundColor: constants.brand,
+    margin: '10px 10px 20px 10px',
+    height: 80,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -275,46 +372,46 @@ const styles = ({
     letterSpacing: 2,
     color: 'white',
   },
-  title: {
-    margin: '0px 0px 0px 60px',
-    fontFamily: 'nunitosans-bold',
-    fontSize: 48,
-  },
   inputTitle: {
     // marginTop: 20,
-    textAlign: 'center',
-    fontSize: 12,
+    marginRight: 40,
+    textAlign: 'right',
+    fontSize: 16,
     letterSpacing: 2,
-    fontFamily: 'nunito-semibold',
+    fontFamily: 'nunito-regular',
+    color: 'white',
     // backgroundColor: constants.paid,
   },
   nameInputText: {
+    marginRight: 40,
+    textAlign: 'right',
     marginBottom: 20,
-    textAlign: 'center',
-    fontFamily: 'nunitosans-semibold',
-    fontSize: 54,
-  },
-  paxInputText: {
-    marginBottom: 20,
-    textAlign: 'center',
     fontFamily: 'nunitosans-semibold',
     fontSize: 48,
-    // backgroundColor: constants.reserved,
+    color: 'white',
+  },
+  paxInputText: {
+    marginRight: 40,
+    textAlign: 'right',
+    marginBottom: 20,
+    fontFamily: 'nunitosans-semibold',
+    fontSize: 48,
+    color: 'white',
   },
   paxButtons: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+    marginRight: 40,
   },
   paxButton: {
-    height: 80,
-    width: 80,
-    margin: 5,
+    height: 36,
+    width: 36,
+    margin: 4,
     alignItems: 'center',
     justifyContent: 'center',
     display: 'flex',
-    borderRadius: 5,
     fontFamily: 'varela-round',
   },
 });

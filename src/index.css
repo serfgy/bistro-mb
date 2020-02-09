@@ -37,6 +37,10 @@ input { outline: none; }
   touch-action: none;
 }
 
+.bg-light {
+  background-color: white;
+}
+
 .bg-dark {
   background-color: #23272A;
 }

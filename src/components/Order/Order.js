@@ -137,12 +137,12 @@ class Order extends Component {
           {
             openorderInfo.openorder.tableId &&
             <div style={styles.header} className='bg-dark'>
-              <div style={styles.headerFirst}>TABLE</div>
+              <div style={styles.headerFirst}>{language === 'en' ? 'TABLE' : '桌号'}</div>
               <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
             </div>
           }
           <div style={styles.header} className='bg-brand'>
-            <div style={styles.headerFirst}>ITEMS</div>
+            <div style={styles.headerFirst}>{language === 'en' ? 'ITEMS' : '项目'}</div>
             <div style={styles.headerSecond}>{this.doCalculateTotalItems()}</div>
             <div style={styles.alertCircle} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N' && !el.refRecKey)) ? 'bg-paid' : 'bg-none'}`}></div>
           </div>

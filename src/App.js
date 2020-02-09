@@ -53,7 +53,7 @@ class App extends Component {
           <Switch>
             <Route path='/register/:tableId'
               render={(routeProps) => (
-                <Register {...routeProps} handleUpdateFromRegister={this.handleUpdateFromRegister} />
+                <Register {...routeProps} handleUpdateFromRegister={this.handleUpdateFromRegister} language={LOCALE()} />
               )} />
             <Route path='/menu/:openorderRecKey'
               render={(routeProps) => (
