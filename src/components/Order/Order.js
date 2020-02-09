@@ -7,6 +7,7 @@ class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      language: props.location.state.language,
       toMenu: false,
     };
   }
@@ -88,24 +89,57 @@ class Order extends Component {
       });
   }
 
+  doToggleLanguage() {
+    const { language } = this.state;
+    if (language === 'en') {
+      this.setState({
+        language: 'zh',
+      })
+    } else {
+      this.setState({
+        language: 'en',
+      })
+    }
+  }
+
   render() {
     const { match, location } = this.props;
-    const { openorderInfo, toMenu } = this.state;
+    const { language, openorderInfo, toMenu } = this.state;
     console.log('render order', openorderInfo);
 
     if (toMenu === true) {
       return <Redirect to={{
         pathname: '/menu/' + match.params.openorderRecKey,
         state: {
+          language: language,
           masters: location.state.masters,
         }
       }} />
     }
 
-    return (
+    return openorderInfo ? (
       <div style={styles.container}>
-        <div style={styles.backButton} onClick={() => this.setState({ toMenu: true })}>
-          <div style={styles.backButtonText}>BACK</div>
+        <div style={styles.headerContainer}>
+          <div style={styles.headerAbsolute} onClick={() => this.setState({ toMenu: true })}>
+            <AntDesign name='left' size={16} color='white' />
+          </div>
+          <div style={styles.headerReverse}
+            onClick={() => this.doToOrder()}>
+            <div style={styles.headerFirstReverse}>{openorderInfo.openorder.vipName || 'GUEST'}</div>
+            <div style={styles.headerSecondReverse}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
+          </div>
+          {
+            openorderInfo.openorder.tableId &&
+            <div style={styles.header} className='bg-dark'>
+              <div style={styles.headerFirst}>TABLE</div>
+              <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
+            </div>
+          }
+          <div style={styles.header} className='bg-brand'>
+            <div style={styles.headerFirst}>ITEMS</div>
+            <div style={styles.headerSecond}>{openorderInfo.openorderItems.length}</div>
+            <div style={styles.alertCircle} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-none'}`}></div>
+          </div>
         </div>
         <div style={styles.headerContainer}>
           <div style={styles.headerColumn}>
@@ -181,13 +215,13 @@ class Order extends Component {
         </div>
         {
           openorderInfo &&
-          <div style={styles.button} className={openorderInfo.openorderItems.find(el => el.confirmFlg === 'N') ? 'bg-paid' : 'bg-grey'}
+          <div style={styles.button} className={openorderInfo.openorderItems.find(el => el.confirmFlg === 'N') ? 'bg-brand' : 'bg-grey'}
             onClick={() => this.doSubmitOpenorder()}>
             SUBMIT
           </div>
         }
       </div>
-    );
+    ) : null;
   }
 }
 
@@ -197,52 +231,76 @@ const styles = ({
     overflow: 'scroll',
     position: 'relative',
   },
-  backButton: {
+  alertCircle: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    marginTop: 10,
-    height: 50,
-    width: 80,
-    backgroundColor: constants.paid,
+    top: -4,
+    right: -4,
+    height: 10,
+    width: 10,
+    borderRadius: 5,
+  },
+  headerContainer: {
+    display: 'flex',
+    margin: '10px 10px 0px 10px',
+    height: 80,
+    justifyContent: 'flex-end',
+  },
+  header: {
+    marginLeft: 10,
+    width: 50,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  headerAbsolute: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    width: 50,
+    height: 80,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: constants.brand,
+  },
+  headerAbsolute2: {
+    position: 'absolute',
+    top: 10,
+    left: 70,
+    width: 50,
+    height: 80,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  headerFirst: {
     fontSize: 10,
     color: 'white',
     letterSpacing: 2,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    textTransform: 'uppercase',
   },
-  backButtonText: {
-    margin: '0px 0px 0px 20px',
+  headerSecond: {
+    fontSize: 16,
+    color: 'white',
   },
-  headerContainer: {
-    // backgroundColor: 'orange',
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  headerColumn: {
-    // backgroundColor: 'red',
-  },
-  header: {
-    marginTop: 10,
-    height: 50,
-    width: 120,
+  headerReverse: {
+    marginLeft: 10,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    // backgroundColor: constants.grey1
   },
-  headerFirst: {
+  headerFirstReverse: {
     fontSize: 10,
-    // color: 'white',
     letterSpacing: 2,
-    marginRight: 20,
+    textTransform: 'uppercase',
   },
-  headerSecond: {
+  headerSecondReverse: {
     fontSize: 16,
-    // color: 'white',
-    marginRight: 20,
   },
   title: {
     margin: '0px 0px 0px 20px',
@@ -304,8 +362,8 @@ const styles = ({
   },
   button: {
     // backgroundColor: constants.paid,
-    margin: 20,
-    height: 60,
+    margin: 10,
+    height: 80,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

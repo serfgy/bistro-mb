@@ -15,6 +15,7 @@ class Register extends Component {
       pax: 2,
       name: '',
       masters: '',
+      openorderInfo: '',
     };
   }
 
@@ -87,6 +88,7 @@ class Register extends Component {
         shopId: 'X0201',
         fingerprint: fingerprint,
         orderType: tableId === 'null' ? 'B' : 'A',
+        tableId: tableId === 'null' ? '' : tableId,
       };
       return fetch(url, {
         method: 'POST',
@@ -98,24 +100,18 @@ class Register extends Component {
         .then(response => response.json())
         .then(response => {
           console.log('post verify-openorder successful', response);
-          if (tableId === 'null') {
-            // queue qr code
+          if (response.redirect === 'Y') {
+            // redirect to menu
             this.setState({
               toMenuKey: response.openorder.recKey,
               toMenu: true,
             })
           } else {
-            // table qr code
-            if (response.openorder && response.openorder.tableId && tableId === response.openorder.tableId) {
-              this.setState({
-                toMenuKey: response.openorder.recKey,
-                toMenu: true,
-              })
-            } else {
-              this.setState({
-                ready: true,
-              })
-            }
+            // ready in register
+            this.setState({
+              ready: true,
+              openorderInfo: response,
+            })
           }
         })
         .catch(error => {
@@ -191,7 +187,6 @@ class Register extends Component {
           </div>
 
           <div style={styles.bodyContainer}>
-            {/* <div style={styles.title}>Hi,</div> */}
             <div>{fingerprint}</div>
             <div style={styles.inputTitle}>ENTER NAME</div>
             <input style={styles.nameInputText} type='text' spellCheck='false'
