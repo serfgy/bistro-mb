@@ -124,7 +124,7 @@ class Menu extends Component {
       });
   }
 
-  handleUpdateFromOverlayCombo = (items) => {
+  handleUpdateFromOverlayCombo = (items, modalInputValueQty) => {
     const { match } = this.props;
     const { selectedMenu } = this.state;
 
@@ -138,7 +138,7 @@ class Menu extends Component {
     const body = {
       openorderRecKey: match.params.openorderRecKey,
       restmenuRecKey: selectedMenu.recKey,
-      orderQty: 1,
+      orderQty: modalInputValueQty,
       itemPayloads: items.map(el => ({
         combogroupRecKey: el.combogroupRecKey,
         comboitemRecKey: el.recKey,
@@ -210,6 +210,11 @@ class Menu extends Component {
     }
   }
 
+  doCalculateTotalItems() {
+    const { openorderInfo } = this.state;
+    return openorderInfo.openorderItems.filter(el => !el.refRecKey).reduce((a, b) => a + b.orderQty, 0);
+  }
+
   render() {
     const { match, location } = this.props;
     const { language, openorderInfo, toOrder,
@@ -218,10 +223,10 @@ class Menu extends Component {
     console.log('render menu', openorderInfo);
 
     const params = {
-      // autoplay: {
-        // delay: 2500,
-        // disableOnInteraction: false
-      // },
+      autoplay: {
+        delay: 2500,
+        disableOnInteraction: false
+      },
       pagination: {
         el: '.swiper-pagination',
         clickable: true
@@ -264,7 +269,7 @@ class Menu extends Component {
           }
           <div style={styles.header} className='bg-brand' onClick={() => this.doToOrder()}>
             <div style={styles.headerFirst}>ITEMS</div>
-            <div style={styles.headerSecond}>{openorderInfo.openorderItems.length}</div>
+            <div style={styles.headerSecond}>{this.doCalculateTotalItems()}</div>
             <div style={styles.alertCircle} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-none'}`}></div>
           </div>
         </div>
@@ -325,7 +330,7 @@ class Menu extends Component {
                 </div>
               ))
             }
-            <div style={{ width: 60, height: 4, borderRadius: 3, backgroundColor: 'rgba(66,69,73,0.1)', margin: 'auto', marginBottom: 20  }}></div>
+            <div style={{ width: 60, height: 4, borderRadius: 3, backgroundColor: 'rgba(66,69,73,0.1)', margin: 'auto', marginBottom: 20 }}></div>
           </div>
           {
             selectedFoldergrp && openorderInfo &&

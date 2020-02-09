@@ -103,6 +103,11 @@ class Order extends Component {
     }
   }
 
+  doCalculateTotalItems() {
+    const { openorderInfo } = this.state;
+    return openorderInfo.openorderItems.filter(el => !el.refRecKey).reduce((a, b) => a + b.orderQty, 0);
+  }
+
   render() {
     const { match, location } = this.props;
     const { language, openorderInfo, toMenu } = this.state;
@@ -138,7 +143,7 @@ class Order extends Component {
           }
           <div style={styles.header} className='bg-brand'>
             <div style={styles.headerFirst}>ITEMS</div>
-            <div style={styles.headerSecond}>{openorderInfo.openorderItems.filter(el => !el.refRecKey).length}</div>
+            <div style={styles.headerSecond}>{this.doCalculateTotalItems()}</div>
             <div style={styles.alertCircle} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N' && !el.refRecKey)) ? 'bg-paid' : 'bg-none'}`}></div>
           </div>
         </div>

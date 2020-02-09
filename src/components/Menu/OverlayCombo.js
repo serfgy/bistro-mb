@@ -15,16 +15,25 @@ class OverlayCombo extends Component {
     this.state = {
       modalInputValueQty: 1,
       selectedComboItems: [],
+      availableComboItems: [...props.availableComboItems.filter(el => el.fixedItem === 'Y'), ...props.availableComboItems.filter(el => el.fixedItem === 'N')],
     };
   }
 
   componentDidMount() {
+    this.doSelectFixedItems();
     this.targetElement = document.querySelector('#targetElement');
     disableBodyScroll(this.targetElement);
   }
 
   componentWillUnmount() {
     enableBodyScroll(this.targetElement);
+  }
+
+  doSelectFixedItems() {
+    const { availableComboItems, availableComboGroups } = this.props;
+    availableComboItems.filter(el => el.fixedItem === 'Y').forEach(el => {
+      this.doSelectComboItem(availableComboGroups.find(obj => obj.groupNo === el.groupNo), el)
+    });
   }
 
   doSelectComboItem(group, item) {
@@ -107,9 +116,9 @@ class OverlayCombo extends Component {
   }
 
   render() {
-    const { language, selectedMenu, availableComboGroups, availableComboItems, } = this.props;
-    const { modalInputValueQty, selectedComboItems } = this.state;
-    console.log('render overlaycombo', selectedComboItems);
+    const { language, selectedMenu, availableComboGroups, } = this.props;
+    const { modalInputValueQty, selectedComboItems, availableComboItems } = this.state;
+    console.log('render overlaycombo', selectedComboItems, availableComboItems);
 
     return (
       <div style={styles.overlay} className='disable-double-tap'>
@@ -182,10 +191,13 @@ class OverlayCombo extends Component {
                             key={item.recKey}
                             onClick={() => this.doSelectComboItem(el, item)}>
                             {
-                              selectedComboItems.find(obj => obj.recKey === item.recKey) ?
-                                <div style={styles.groupItemLeftSelected}></div>
+                              item.fixedItem === 'Y' ?
+                                <div style={styles.groupItemLeftFixed}></div>
                                 :
-                                <div style={styles.groupItemLeft}></div>
+                                availableComboItems.filter(obj => obj.groupNo === item.groupNo).find(obj => obj.fixedItem === 'Y') ?
+                                  <div style={styles.groupItemLeftNonFixed} className={`${selectedComboItems.find(obj => obj.recKey === item.recKey) ? 'bg-brand' : 'bg-none'}`}></div>
+                                  :
+                                  <div style={styles.groupItemLeft} className={`${selectedComboItems.find(obj => obj.recKey === item.recKey) ? 'bg-brand' : 'bg-none'}`}></div>
                             }
                             <div style={styles.groupItemRight}>{item.menuName}</div>
                           </div>
@@ -200,7 +212,7 @@ class OverlayCombo extends Component {
               {selectedMenu.remark}
             </div>
             <div style={styles.button} className='bg-brand'
-              onClick={() => this.props.handleUpdateFromOverlayCombo(selectedComboItems)}>
+              onClick={() => this.props.handleUpdateFromOverlayCombo(selectedComboItems, modalInputValueQty)}>
               {language === 'en' ? 'ADD TO ORDER' : '加入点单'}
             </div>
           </div >
@@ -336,19 +348,26 @@ const styles = ({
     alignItems: 'center',
   },
   groupItemLeft: {
-    // backgroundColor: constants.paid,
     height: 16,
     width: 16,
     marginLeft: 10,
     marginRight: 10,
     border: `1px solid ${constants.brand}`,
   },
-  groupItemLeftSelected: {
+  groupItemLeftNonFixed: {
+    height: 16,
+    width: 16,
+    marginLeft: 40,
+    marginRight: 10,
+    border: `1px solid ${constants.brand}`,
+  },
+  groupItemLeftFixed: {
     backgroundColor: constants.brand,
     height: 16,
     width: 16,
     marginLeft: 10,
     marginRight: 10,
+    borderRadius: 16,
     border: `1px solid ${constants.brand}`,
   },
   groupItemRight: {
