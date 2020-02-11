@@ -89,6 +89,15 @@ class OverlayMenu extends Component {
     }
   }
 
+  doPressOrder() {
+    const { selectedMenu } = this.props;
+    const { modalInputValueQty } = this.state;
+    if (selectedMenu.statusFlg === 'B') {
+      return;
+    }
+    this.props.handleUpdateFromOverlayMenu(modalInputValueQty)
+  }
+
   render() {
     const { language, selectedMenu } = this.props;
     const { modalInputValueQty } = this.state;
@@ -158,8 +167,8 @@ class OverlayMenu extends Component {
             <div style={styles.remarksContainer}>
               {selectedMenu.remark}
             </div>
-            <div style={styles.button} className='bg-brand'
-              onClick={() => this.props.handleUpdateFromOverlayMenu(modalInputValueQty)}>
+            <div style={styles.button} className={`${selectedMenu.statusFlg === 'A' ? 'bg-brand' : 'bg-grey'}`}
+              onClick={() => this.doPressOrder()}>
               {language === 'en' ? 'ADD TO ORDER' : '加入点单'}
             </div>
           </div >

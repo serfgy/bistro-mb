@@ -138,7 +138,7 @@ class Order extends Component {
             openorderInfo.openorder.tableId &&
             <div style={styles.header} className='bg-dark'>
               <div style={styles.headerFirst}>{language === 'en' ? 'TABLE' : '桌号'}</div>
-              <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
+              <div style={styles.headerSecond}>{openorderInfo.openorder.tableId.split('-')[0]}</div>
             </div>
           }
           <div style={styles.header} className='bg-brand'>
@@ -147,12 +147,6 @@ class Order extends Component {
             <div style={styles.alertCircle} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N' && !el.refRecKey)) ? 'bg-paid' : 'bg-none'}`}></div>
           </div>
         </div>
-        {
-          language == 'en' ?
-            <div style={styles.subtitle}>{moment(openorderInfo.openorder.seatTime).format('HH:mm')}</div>
-            :
-            <div style={styles.subtitle}>{moment(openorderInfo.openorder.seatTime).format('HH:mm')}</div>
-        }
         <div style={styles.title}>{language === 'en' ? 'Order' : '点单'} #{openorderInfo.openorder.recKey}</div>
         {
           language === 'en' ?
@@ -207,11 +201,27 @@ class Order extends Component {
             })
           }
         </div>
+        <div style={styles.summaryRow}>
+          <div style={styles.summaryTitle}>{language === 'en' ? 'Subtotal' : '小计'}</div>
+          <div style={styles.detailContainerThird}>${openorderInfo.openorder.beforeDisc.toFixed(2)}</div>
+        </div>
+        <div style={styles.summaryRow}>
+          <div style={styles.summaryTitle}>{language === 'en' ? 'Service' : '服务费'}</div>
+          <div style={styles.detailContainerThird}>${openorderInfo.openorder.serviceCharge.toFixed(2)}</div>
+        </div>
+        <div style={styles.summaryRow}>
+          <div style={styles.summaryTitle}>{language === 'en' ? 'GST' : '消费税'}</div>
+          <div style={styles.detailContainerThird}>${openorderInfo.openorder.totalTax.toFixed(2)}</div>
+        </div>
+        <div style={styles.summaryRow}>
+          <div style={styles.summaryTitle}>{language === 'en' ? 'Grand Total' : '总计'}</div>
+          <div style={styles.detailContainerThird}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
+        </div>
         {
           openorderInfo &&
           <div style={styles.button} className={openorderInfo.openorderItems.find(el => el.confirmFlg === 'N') ? 'bg-brand' : 'bg-grey'}
             onClick={() => this.doSubmitOpenorder()}>
-            {language === 'en' ? 'SEND TO KITCHEN' : '送去厨房'}
+            {language === 'en' ? 'CONFIRM ORDER' : '确认点单'}
           </div>
         }
       </div>
@@ -297,15 +307,15 @@ const styles = ({
     fontSize: 16,
   },
   title: {
-    margin: '0px 0px 0px 20px',
+    margin: '40px 0px 0px 20px',
     fontFamily: 'nunitosans-semibold',
     fontSize: 36,
   },
-  subtitle: {
-    margin: '40px 0px 0px 20px',
-    fontFamily: 'nunito-regular',
-    fontSize: 16,
-  },
+  // subtitle: {
+  //   margin: '40px 0px 0px 20px',
+  //   fontFamily: 'nunito-regular',
+  //   fontSize: 16,
+  // },
   subsubtitle: {
     margin: '0px 0px 0px 20px',
     fontFamily: 'nunito-regular',
@@ -353,9 +363,21 @@ const styles = ({
     textAlign: 'right',
     // backgroundColor: 'red'
   },
+  summaryRow: {
+    // backgroundColor: 'red',
+    display: 'flex',
+    flexDirection: 'row',
+    margin: '0px 20px 10px 0px',
+    justifyContent: 'flex-end',
+  },
+  summaryTitle: {
+    fontFamily: 'nunito-bold',
+    fontSize: 16,
+    color: constants.brand
+  },
   button: {
     // backgroundColor: constants.paid,
-    margin: '10px 10px 20px 10px',
+    margin: '40px 10px 20px 10px',
     height: 80,
     display: 'flex',
     alignItems: 'center',

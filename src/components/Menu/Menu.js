@@ -264,7 +264,7 @@ class Menu extends Component {
             <div style={styles.header} className='bg-dark'
               onClick={() => this.doToOrder()}>
               <div style={styles.headerFirst}>{language === 'en' ? 'TABLE' : '桌号'}</div>
-              <div style={styles.headerSecond}>{openorderInfo.openorder.tableId}</div>
+              <div style={styles.headerSecond}>{openorderInfo.openorder.tableId.split('-')[0]}</div>
             </div>
           }
           <div style={styles.header} className='bg-brand' onClick={() => this.doToOrder()}>

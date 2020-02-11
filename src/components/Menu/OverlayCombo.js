@@ -37,7 +37,38 @@ class OverlayCombo extends Component {
   }
 
   doSelectComboItem(group, item) {
+    const { availableComboGroups } = this.props;
     const { selectedComboItems } = this.state;
+    // early return for already selected fixed items
+    if (item.fixedItem === 'Y' && selectedComboItems.find(el => el.recKey === item.recKey)) {
+      return;
+    }
+    // special return for items with fixed item in group
+    if (item.fixedItem === 'N' && selectedComboItems.filter(el => el.groupNo === item.groupNo).find(el => el.fixedItem === 'Y')) {
+      let selectedComboItemsUpdate = selectedComboItems.filter(el => !(el.groupNo === item.groupNo && el.fixedItem === 'N'));
+      let itemUpdate = { ...item, combogroupRecKey: group.recKey };
+      selectedComboItemsUpdate.push(itemUpdate);
+      this.setState({
+        selectedComboItems: selectedComboItemsUpdate,
+      });
+      return;
+    }
+    // special return for items with min 1 max 1
+    if (
+      item.fixedItem === 'N' &&
+      !selectedComboItems.filter(el => el.groupNo === item.groupNo).find(el => el.fixedItem === 'Y') &&
+      availableComboGroups.find(el => el.groupNo === item.groupNo).maxSelectItem === 1 &&
+      availableComboGroups.find(el => el.groupNo === item.groupNo).minSelectItem === 1
+    ) {
+      let selectedComboItemsUpdate = selectedComboItems.filter(el => !(el.groupNo === item.groupNo));
+      let itemUpdate = { ...item, combogroupRecKey: group.recKey };
+      selectedComboItemsUpdate.push(itemUpdate);
+      this.setState({
+        selectedComboItems: selectedComboItemsUpdate,
+      });
+      return;
+    }
+    // no control yet for other cases
     let selectedComboItemsUpdate = selectedComboItems;
     let itemUpdate = { ...item, combogroupRecKey: group.recKey };
     if (!selectedComboItems.find(el => el.recKey === item.recKey)) {
@@ -45,8 +76,7 @@ class OverlayCombo extends Component {
     } else {
       selectedComboItemsUpdate = selectedComboItems.filter(el => el.recKey !== item.recKey);
     }
-
-
+    // update state
     this.setState({
       selectedComboItems: selectedComboItemsUpdate,
     });
@@ -115,10 +145,19 @@ class OverlayCombo extends Component {
     }
   }
 
+  doPressOrder() {
+    const { selectedMenu } = this.props;
+    const { selectedComboItems, modalInputValueQty } = this.state;
+    if (selectedMenu.statusFlg === 'B') {
+      return;
+    }
+    this.props.handleUpdateFromOverlayCombo(selectedComboItems, modalInputValueQty);
+  }
+
   render() {
     const { language, selectedMenu, availableComboGroups, } = this.props;
     const { modalInputValueQty, selectedComboItems, availableComboItems } = this.state;
-    console.log('render overlaycombo', selectedComboItems, availableComboItems);
+    console.log('render overlaycombo', selectedComboItems, availableComboItems, availableComboGroups);
 
     return (
       <div style={styles.overlay} className='disable-double-tap'>
@@ -130,7 +169,7 @@ class OverlayCombo extends Component {
               </div>
             </div>
 
-            <div style={styles.title}>{selectedMenu.menuName}</div>
+            <div style={styles.title}>{language === 'en' ? selectedMenu.menuName : selectedMenu.menuNameLang}</div>
             <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
             <div style={styles.imageContainer}>
               <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
@@ -183,7 +222,7 @@ class OverlayCombo extends Component {
               {
                 availableComboGroups && availableComboGroups.map(el => (
                   <div style={styles.groupContainer} key={el.recKey}>
-                    <div style={styles.groupTitle}>{el.groupName}</div>
+                    <div style={styles.groupTitle}>{language === 'en' ? el.groupName : el.groupNameLang}</div>
                     <div style={styles.groupItems}>
                       {
                         availableComboItems && availableComboItems.filter(item => item.groupNo === el.groupNo).map(item => (
@@ -199,7 +238,7 @@ class OverlayCombo extends Component {
                                   :
                                   <div style={styles.groupItemLeft} className={`${selectedComboItems.find(obj => obj.recKey === item.recKey) ? 'bg-brand' : 'bg-none'}`}></div>
                             }
-                            <div style={styles.groupItemRight}>{item.menuName}</div>
+                            <div style={styles.groupItemRight}>{language === 'en' ? item.menuName : item.menuNameLang}{item.addonPrice !== 0 && <span style={{ color: constants.paid }}> +${item.addonPrice.toFixed(2)}</span>}</div>
                           </div>
                         ))
                       }
@@ -211,8 +250,8 @@ class OverlayCombo extends Component {
             <div style={styles.remarksContainer}>
               {selectedMenu.remark}
             </div>
-            <div style={styles.button} className='bg-brand'
-              onClick={() => this.props.handleUpdateFromOverlayCombo(selectedComboItems, modalInputValueQty)}>
+            <div style={styles.button} className={`${selectedMenu.statusFlg === 'A' ? 'bg-brand' : 'bg-grey'}`}
+              onClick={() => this.doPressOrder()}>
               {language === 'en' ? 'ADD TO ORDER' : '加入点单'}
             </div>
           </div >

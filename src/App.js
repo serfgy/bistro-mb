@@ -22,8 +22,8 @@ class App extends Component {
 
   componentDidMount() { }
 
-  handleUpdateFromRegister = () => {
-    this.setState({ bannerVisible: true })
+  handleUpdateFromRegister = (item) => {
+    this.setState({ bannerVisible: true, bannerContent: item })
   }
 
   handleUpdateFromMenu = (item) => {
@@ -35,7 +35,7 @@ class App extends Component {
   }
 
   handleUpdateFromBanner = () => {
-    this.setState({ bannerVisible: false, bannerContent: '', })
+    this.setState({ bannerVisible: false })
   }
 
   render() {
