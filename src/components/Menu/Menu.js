@@ -12,6 +12,7 @@ import SPICY2 from '../images/spicy2.png';
 import SPICY3 from '../images/spicy3.png';
 import OverlayMenu from './OverlayMenu';
 import OverlayCombo from './OverlayCombo';
+import { AntDesign } from 'react-web-vector-icons';
 
 class Menu extends Component {
   constructor(props) {
@@ -246,6 +247,34 @@ class Menu extends Component {
 
     return openorderInfo ? (
       <div>
+        <div style={styles.fixedContainer} onClick={() => this.doToOrder()}>
+          <div style={styles.fixedContent}>
+            <div style={styles.headerAbsolute3}>
+              <img alt='' style={styles.menuImage} src={logo} />
+            </div>
+            <div style={styles.headerAbsolute4}>
+            </div>
+            <div style={styles.headerAbsolute5}>
+              <AntDesign name='doubleright' size={20} color='white' />
+            </div>
+            <div style={styles.headerAbsolute6} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-none'}`}></div>
+            <div style={styles.fixedContentLeft}></div>
+            <div style={styles.fixedContentRight}>
+              <div style={{ marginLeft: 10, marginRight: 20, }}>
+                <div style={styles.headerFirst}>{openorderInfo.openorder.vipName || 'GUEST'}</div>
+                <div style={styles.headerSecond}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
+              </div>
+              <div style={{ marginRight: 20, }}>
+                <div style={styles.headerFirst}>{language === 'en' ? 'TABLE' : '桌号'}</div>
+                <div style={styles.headerSecond}>{openorderInfo.openorder.tableId.split('-')[0]}</div>
+              </div>
+              <div style={{ marginRight: 20, }}>
+                <div style={styles.headerFirst}>{language === 'en' ? 'ITEMS' : '项目'}</div>
+                <div style={styles.headerSecond}>{this.doCalculateTotalItems()}</div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div style={styles.headerContainer}>
           <div style={styles.headerAbsolute}>
             <img alt='' style={styles.menuImage} src={logo} />
@@ -270,7 +299,7 @@ class Menu extends Component {
           <div style={styles.header} className='bg-brand' onClick={() => this.doToOrder()}>
             <div style={styles.headerFirst}>{language === 'en' ? 'ITEMS' : '项目'}</div>
             <div style={styles.headerSecond}>{this.doCalculateTotalItems()}</div>
-            <div style={styles.alertCircle} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-none'}`}></div>
+            {/* <div style={styles.alertCircle} className={`${(openorderInfo.openorderItems.length > 0 && openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) ? 'bg-paid' : 'bg-none'}`}></div> */}
           </div>
         </div>
         <div style={styles.aboveContainer}>
@@ -330,7 +359,7 @@ class Menu extends Component {
                 </div>
               ))
             }
-            <div style={{ width: 60, height: 4, borderRadius: 3, backgroundColor: 'rgba(66,69,73,0.1)', margin: 'auto', marginBottom: 20 }}></div>
+            <div style={{ width: 60, height: 4, borderRadius: 3, backgroundColor: 'rgba(66,69,73,0.1)', margin: 'auto', marginBottom: 120 }}></div>
           </div>
           {
             selectedFoldergrp && openorderInfo &&
@@ -380,17 +409,44 @@ class Menu extends Component {
                     </div>
                   ))
                 }
-                <div style={{ width: 60, height: 4, borderRadius: 3, backgroundColor: 'rgba(66,69,73,0.1)', margin: 'auto', marginBottom: 20 }}></div>
+                <div style={{ width: 60, height: 4, borderRadius: 3, backgroundColor: 'rgba(66,69,73,0.1)', margin: 'auto', marginBottom: 120 }}></div>
               </div>
             </div>
           }
         </div>
-      </div>
+      </div >
     ) : null;
   }
 }
 
 const styles = ({
+  fixedContainer: {
+    position: 'fixed',
+    bottom: 0,
+    width: '100%',
+    height: 70,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    zIndex: 2,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  fixedContent: {
+    flex: 1,
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  fixedContentLeft: {
+    width: 70,
+    // backgroundColor: 'red'
+  },
+  fixedContentRight: {
+    flex: 1,
+    marginTop: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    // backgroundColor: 'yellow'
+  },
   aboveContainer: {
     // backgroundColor: 'green',
   },
@@ -472,6 +528,40 @@ const styles = ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
+  },
+  headerAbsolute3: {
+    position: 'absolute',
+    overflow: 'hidden',
+    bottom: 20,
+    left: 10,
+    width: 46,
+    height: 76,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    border: `2px solid ${constants.brand}`,
+  },
+  headerAbsolute4: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 10,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  headerAbsolute5: {
+    position: 'absolute',
+    bottom: 25,
+    right: 20,
+  },
+  headerAbsolute6: {
+    position: 'absolute',
+    bottom: 45,
+    right: 15,
+    height: 10,
+    width: 10,
+    borderRadius: 5,
   },
   headerFirst: {
     fontSize: 10,
