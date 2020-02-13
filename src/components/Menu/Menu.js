@@ -266,7 +266,7 @@ class Menu extends Component {
               </div>
               <div style={{ marginRight: 20, }}>
                 <div style={styles.headerFirst}>{language === 'en' ? 'TABLE' : '桌号'}</div>
-                <div style={styles.headerSecond}>{openorderInfo.openorder.tableId.split('-')[0]}</div>
+                <div style={styles.headerSecond}>{openorderInfo.openorder.tableId || '-'}</div>
               </div>
               <div style={{ marginRight: 20, }}>
                 <div style={styles.headerFirst}>{language === 'en' ? 'ITEMS' : '项目'}</div>
