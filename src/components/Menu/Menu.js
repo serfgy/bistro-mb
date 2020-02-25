@@ -352,10 +352,10 @@ class Menu extends Component {
                     this.scrollToRef.scrollIntoView()
                     this.doSelectFoldergrp(item);
                   }}>
-                  <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.foldergrpId} />
-                  <div style={styles.selectionTextFirst}>{item.name}</div>
+                  <img alt='' style={styles.image} src={'https://dev.epbmobile.app:8090/gateway/epbm/api/image/stock?stkId=' + item.name} />
+                  <div style={styles.selectionTextFirst}>{item.nameLang}</div>
                   <div style={styles.selectionBetween}>-</div>
-                  <div style={styles.selectionTextSecond}>{item.foldergrpId}</div>
+                  <div style={styles.selectionTextSecond}>{item.name}</div>
                 </div>
               ))
             }
@@ -365,8 +365,8 @@ class Menu extends Component {
             selectedFoldergrp && openorderInfo &&
             <div style={styles.rightContainer}>
               <div style={{ margin: 10 }}>
-                <div style={styles.subtitle}>{language === 'en' ? selectedFoldergrp.name : selectedFoldergrp.foldergrpId}</div>
-                <div style={styles.title}>{language === 'en' ? selectedFoldergrp.foldergrpId : selectedFoldergrp.name}</div>
+                <div style={styles.subtitle}>{language === 'en' ? selectedFoldergrp.nameLang : selectedFoldergrp.name}</div>
+                <div style={styles.title}>{language === 'en' ? selectedFoldergrp.name : selectedFoldergrp.nameLang}</div>
                 <div style={styles.subsubtitle}>• {displays.length} {language === 'en' ? 'selections' : '菜单项目'} •</div>
               </div>
               <div style={styles.menus}>
