@@ -172,7 +172,7 @@ class Order extends Component {
                     <div style={styles.iconContainer}></div>
                     <div style={styles.detailContainer}>
                       <div style={styles.detailContainerFirst}></div>
-                      <div style={styles.detailContainerSecond}>- {item.menuName}</div>
+                      <div style={styles.detailContainerSecond}>- {language === 'en' ? item.menuName : item.menuNameLang}</div>
                       <div style={styles.detailContainerThird}>${item.lineTotal.toFixed(2)}</div>
                     </div>
                   </div>
@@ -193,7 +193,7 @@ class Order extends Component {
                   }
                   <div style={styles.detailContainer}>
                     <div style={styles.detailContainerFirst}>{item.orderQty}</div>
-                    <div style={styles.detailContainerSecond}>{item.menuName}</div>
+                    <div style={styles.detailContainerSecond}>{language === 'en' ? item.menuName : item.menuNameLang}</div>
                     <div style={styles.detailContainerThird}>${item.lineTotal.toFixed(2)}</div>
                   </div>
                 </div>
