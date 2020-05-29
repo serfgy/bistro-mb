@@ -49,7 +49,7 @@ class App extends Component {
             content={bannerContent}
             handleUpdateFromBanner={this.handleUpdateFromBanner} />
         }
-        <Router>
+        <Router basename='/bistro-mb'>
           <Switch>
             <Route path='/register/:tableId'
               render={(routeProps) => (
