@@ -352,7 +352,7 @@ class Menu extends Component {
                     this.scrollToRef.scrollIntoView()
                     this.doSelectFoldergrp(item);
                   }}>
-                  <img alt='' style={styles.image} src={'https://epbrowser.com:8090/gateway/epbm/api/image/stock?stkId=' + item.name} />
+                  <img alt='' style={styles.image} src={'https://www.epbrowser.com:8090/image-proxy/ASP/LSTUDIO/NORMAL/Shell/picture/' + item.name + '.jpg'} />
                   <div style={styles.selectionTextFirst}>{item.nameLang}</div>
                   <div style={styles.selectionBetween}>-</div>
                   <div style={styles.selectionTextSecond}>{item.name}</div>
