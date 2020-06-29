@@ -15,7 +15,7 @@ class Order extends Component {
 
   componentDidMount() {
     const { match } = this.props;
-    fetch('https://dev.epbmobile.app:8090/fnb-ws/api/openorders/' + match.params.openorderRecKey)
+    fetch('https://epbrowser.com:8090/fnb-ws/api/openorders/' + match.params.openorderRecKey)
       .then(response => response.json())
       .then(response => {
         this.setState({
@@ -26,7 +26,7 @@ class Order extends Component {
 
   doDeleteOpenorderItem(item) {
     const { match } = this.props;
-    let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/delete-openorder-item/';
+    let url = 'https://epbrowser.com:8090/fnb-ws/api/delete-openorder-item/';
     const body = {
       openorderRecKey: match.params.openorderRecKey,
       openorderItemRecKey: item.recKey,
@@ -62,7 +62,7 @@ class Order extends Component {
     if (!openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) {
       return;
     }
-    let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/submit-openorder';
+    let url = 'https://epbrowser.com:8090/fnb-ws/api/submit-openorder';
     const body = {
       openorderRecKey: match.params.openorderRecKey,
     };

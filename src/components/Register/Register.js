@@ -42,31 +42,31 @@ class Register extends Component {
 
     let promiseArray = [];
 
-    let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/foldergrps?orgId=X02';
+    let url = 'https://epbrowser.com:8090/fnb-ws/api/foldergrps?orgId=X02';
     let promiseObject = { url: url, nameString: 'foldergrps' };
     promiseArray.push(promiseObject);
 
-    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/folders?orgId=X02&shopId=X0201'
+    url = 'https://epbrowser.com:8090/fnb-ws/api/folders?orgId=X02&shopId=X0201'
     promiseObject = { url: url, nameString: 'folders' };
     promiseArray.push(promiseObject);
 
-    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/menus?orgId=X02';
+    url = 'https://epbrowser.com:8090/fnb-ws/api/menus?orgId=X02';
     promiseObject = { url: url, nameString: 'menus' };
     promiseArray.push(promiseObject);
 
-    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/mods?orgId=X02'
+    url = 'https://epbrowser.com:8090/fnb-ws/api/mods?orgId=X02'
     promiseObject = { url: url, nameString: 'mods' };
     promiseArray.push(promiseObject);
 
-    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/mod-bundles'
+    url = 'https://epbrowser.com:8090/fnb-ws/api/mod-bundles'
     promiseObject = { url: url, nameString: 'modBundles' };
     promiseArray.push(promiseObject);
 
-    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/combo-items?orgId=X02'
+    url = 'https://epbrowser.com:8090/fnb-ws/api/combo-items?orgId=X02'
     promiseObject = { url: url, nameString: 'comboItems' };
     promiseArray.push(promiseObject);
 
-    url = 'https://dev.epbmobile.app:8090/fnb-ws/api/combo-groups?orgId=X02'
+    url = 'https://epbrowser.com:8090/fnb-ws/api/combo-groups?orgId=X02'
     promiseObject = { url: url, nameString: 'comboGroups' };
     promiseArray.push(promiseObject);
 
@@ -86,7 +86,7 @@ class Register extends Component {
         masters: masters,
       });
     }).then(response => {
-      let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/verify-openorder';
+      let url = 'https://epbrowser.com:8090/fnb-ws/api/verify-openorder';
       const body = {
         shopId: 'X0201',
         fingerprint: fingerprint,
@@ -125,7 +125,7 @@ class Register extends Component {
 
   doUpdateOpenorder() {
     const { fingerprint, tableId, pax, name } = this.state;
-    let url = 'https://dev.epbmobile.app:8090/fnb-ws/api/update-openorder';
+    let url = 'https://epbrowser.com:8090/fnb-ws/api/update-openorder';
     const body = {
       shopId: 'X0201',
       tableId: tableId,
