@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Fingerprint2 from 'fingerprintjs2';
 import constants from '../constants/constants';
-import logo from '../images/logo.png';
+import logo from '../images/logo1.png';
 import splash from '../images/splash.jpg';
 
 class Register extends Component {

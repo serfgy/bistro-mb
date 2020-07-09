@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
 import constants from '../constants/constants';
-import logo from '../images/logo.png';
+import logo from '../images/logo1.png';
 import BEEF from '../images/beef.png';
 import PORK from '../images/pork.png';
 import VEGAN from '../images/vegan.png';
