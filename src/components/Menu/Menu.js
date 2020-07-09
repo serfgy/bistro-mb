@@ -276,8 +276,8 @@ class Menu extends Component {
           </div>
         </div>
         <div style={styles.headerContainer}>
-          <div style={styles.headerAbsolute}>
-            <img alt='' style={styles.menuImage} src={logo} />
+          <div style={styles.headerAbsolute7}>
+            <img alt='' style={styles.logoImage} src={logo} />
           </div>
           <div style={styles.headerAbsolute2} onClick={() => this.doToggleLanguage()}>
             <div style={styles.headerFirstReverse}>{language === 'en' ? 'EN' : 'ZH'}</div>
@@ -492,6 +492,17 @@ const styles = ({
     width: 10,
     borderRadius: 5,
   },
+  logoImage: {
+    height: '100%',
+    minWidth: '100%',
+    position: 'absolute',
+    // zIndex: -1,
+    top: '-9999px',
+    bottom: '-9999px',
+    left: '-9999px',
+    right: '-9999px',
+    margin: 'auto',
+  },
   headerContainer: {
     display: 'flex',
     margin: '10px 10px 0px 10px',
@@ -562,6 +573,18 @@ const styles = ({
     height: 10,
     width: 10,
     borderRadius: 5,
+  },
+  headerAbsolute7: {
+    position: 'absolute',
+    overflow: 'hidden',
+    top: 10,
+    left: 10,
+    width: 50,
+    height: 80,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerFirst: {
     fontSize: 10,
