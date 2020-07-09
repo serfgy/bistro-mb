@@ -306,24 +306,24 @@ class Menu extends Component {
           <Swiper {...params}>
             <div>
               <div style={styles.slide}>
-                <img alt='' style={styles.menuImage} src={'https://www.nookmag.com/wp-content/uploads/2018/07/KV-Landscape.jpg'} />
+                <img alt='' style={styles.menuImage} src={'https://media.cntraveler.com/photos/5a91e3bfa566be4ab1b46898/master/pass/Mott__-32_2018_MT-Cheung-Fun,-Chicken-Feet,-Minced-Beef-Balls,-Black-Cod-Dumplings,-Turnip-Cake,-Spare-Ribs-copy.jpg'} />
               </div>
             </div>
             <div>
               <div style={styles.slide}>
-                <img alt='' style={styles.menuImage} src={'https://eatbook.sg/wp-content/uploads/2020/01/Burger-King-Bundle-Meal.jpg'} />
+                <img alt='' style={styles.menuImage} src={'https://d22ir9aoo7cbf6.cloudfront.net/wp-content/uploads/sites/2/2019/12/Wan-Hao-Chinese-Restaurant-Singapore-Marriott-Tang-Plaza.jpg'} />
               </div>
             </div>
             <div>
               <div style={styles.slide}>
-                <img alt='' style={styles.menuImage} src={'https://pbs.twimg.com/media/DofRNbMWsAApMc0.jpg:large'} />
+                <img alt='' style={styles.menuImage} src={'https://colorlib.com/wp/wp-content/uploads/sites/2/fast-food-menu-mockup.jpg'} />
               </div>
             </div>
-            <div>
+            {/* <div>
               <div style={styles.slide}>
                 <img alt='' style={styles.menuImage} src={'https://www.subway.com/~/media/Base_Arabic/English/Promotions/Marquees/Mobile/HomeBanner/jan-2018-all-markets-mobile-en.jpg'} />
               </div>
-            </div>
+            </div> */}
           </Swiper>
         </div>
         <div style={styles.container}>
