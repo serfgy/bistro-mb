@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import moment from 'moment';
 import constants from '../constants/constants';
+import OverlayAddress from './OverlayAddress';
 import { AntDesign } from 'react-web-vector-icons';
 
 class Order extends Component {
@@ -10,6 +11,8 @@ class Order extends Component {
     this.state = {
       language: props.location.state.language,
       toMenu: false,
+      overlayAddressVisible: false,
+      delivery: true,
     };
   }
 
@@ -55,16 +58,37 @@ class Order extends Component {
       });
   }
 
-  doSubmitOpenorder() {
+  doPressSubmit() {
     const { match } = this.props;
-    const { openorderInfo } = this.state;
-    // to do 
+    const { openorderInfo, delivery } = this.state;
+    // no items to submit
     if (!openorderInfo.openorderItems.find(el => el.confirmFlg === 'N')) {
       return;
     }
+    // still processing
+    if (!openorderInfo.openorder.statusFlg === 'P') {
+      return;
+    }
+
+
+    if (delivery) {
+      this.setState({
+        overlayAddressVisible: true,
+      })
+    } else {
+      this.doSubmitOpenorder();
+    }
+  }
+
+  doSubmitOpenorder(phone, name, postalCode, address) {
+    const { match } = this.props;
+    const { openorderInfo, delivery } = this.state;
     let url = 'https://epbrowser.com:8090/fnb-ws/api/submit-openorder';
     const body = {
       openorderRecKey: match.params.openorderRecKey,
+      postalCode: postalCode || '',
+      addr1: address || '',
+      deliveryFlg: address ? 'Y' : 'N',
     };
     console.log('post submit-openorder body', body);
     fetch(url, {
@@ -108,9 +132,21 @@ class Order extends Component {
     return openorderInfo.openorderItems.filter(el => !el.refRecKey).reduce((a, b) => a + b.orderQty, 0);
   }
 
+  handleUpdateFromOverlayAddress = (phone, name, postalCode, address) => {
+
+    this.setState({ overlayAddressVisible: false })
+
+    if (!phone) {
+      return;
+    }
+
+    this.doSubmitOpenorder(phone, name, postalCode, address);
+  }
+
   render() {
     const { match, location } = this.props;
-    const { language, openorderInfo, toMenu } = this.state;
+    const { language, openorderInfo, toMenu,
+      overlayAddressVisible, delivery } = this.state;
     console.log('render order', openorderInfo);
 
     if (toMenu === true) {
@@ -125,6 +161,13 @@ class Order extends Component {
 
     return openorderInfo ? (
       <div style={styles.container}>
+        {
+          overlayAddressVisible &&
+          <OverlayAddress
+            language={language}
+            // selectedMenu={selectedMenu}
+            handleUpdateFromOverlayAddress={this.handleUpdateFromOverlayAddress} />
+        }
         <div style={styles.headerContainer}>
           <div style={styles.headerAbsolute} onClick={() => this.setState({ toMenu: true })}>
             <AntDesign name='left' size={16} color='white' />
@@ -149,10 +192,24 @@ class Order extends Component {
         </div>
         <div style={styles.title}>{language === 'en' ? 'Order' : '点单'} #{openorderInfo.openorder.recKey}</div>
         {
-          language === 'en' ?
-            <div style={styles.subsubtitle}>You have <span style={{ color: constants.paid }}>{openorderInfo && openorderInfo.openorderItems.filter(el => el.confirmFlg === 'N' && !el.refRecKey).length}</span> unsubmitted item(s) in your order.</div>
+          openorderInfo.openorder.statusFlg === 'P' ?
+            <div style={styles.subsubtitle}>
+              {
+                language === 'en' ?
+                  <span>Processing</span>
+                  :
+                  <span>处理中</span>
+              }
+            </div>
             :
-            <div style={styles.subsubtitle}>你有 <span style={{ color: constants.paid }}>{openorderInfo && openorderInfo.openorderItems.filter(el => el.confirmFlg === 'N' && !el.refRecKey).length}</span> 件未确认项目。</div>
+            <div style={styles.subsubtitle}>
+              {
+                language === 'en' ?
+                  <span>You have <span style={{ color: constants.paid }}>{openorderInfo && openorderInfo.openorderItems.filter(el => el.confirmFlg === 'N' && !el.refRecKey).length}</span> unsubmitted item(s) in your order.</span>
+                  :
+                  <span>你有 <span style={{ color: constants.paid }}>{openorderInfo && openorderInfo.openorderItems.filter(el => el.confirmFlg === 'N' && !el.refRecKey).length}</span> 件未确认项目。</span>
+              }
+            </div>
         }
         <div style={styles.ordersContainer}>
           <div style={{ display: 'flex', flexDirection: 'row', margin: '0px 20px 0px 10px' }}>
@@ -182,14 +239,18 @@ class Order extends Component {
                 <div style={styles.order}
                   key={item.recKey}>
                   {
-                    item.confirmFlg === 'N' ?
-                      <div style={styles.iconContainer} onClick={() => this.doDeleteOpenorderItem(item)}>
-                        <AntDesign name='minuscircleo' size={16} color={constants.paid} />
-                      </div>
-                      :
+                    openorderInfo.openorder.statusFlg === 'P' ?
                       <div style={styles.iconContainer}>
-                        <AntDesign name='check' size={16} color={constants.grey5} />
+                        <AntDesign name='clockcircleo' size={16} color={constants.grey5} />
                       </div>
+                      : item.confirmFlg === 'N' ?
+                        <div style={styles.iconContainer} onClick={() => this.doDeleteOpenorderItem(item)}>
+                          <AntDesign name='minuscircleo' size={16} color={constants.paid} />
+                        </div>
+                        :
+                        <div style={styles.iconContainer}>
+                          <AntDesign name='check' size={16} color={constants.grey5} />
+                        </div>
                   }
                   <div style={styles.detailContainer}>
                     <div style={styles.detailContainerFirst}>{item.orderQty}</div>
@@ -218,9 +279,25 @@ class Order extends Component {
           <div style={styles.detailContainerThird}>${openorderInfo.openorder.grandTotal.toFixed(2)}</div>
         </div>
         {
+          openorderInfo.openorder.homeDelivery === 'Y' &&
+          <div style={styles.groupContainer}>
+            <div style={styles.groupItems}>
+              <div style={styles.groupItem} onClick={() => this.setState({ delivery: !delivery })}>
+                <div style={styles.groupItemLeft} className={`${delivery ? 'bg-brand' : 'bg-none'}`}>
+
+                </div>
+                <div style={styles.groupItemRight}>
+                  {language === 'en' ? 'Require delivery service' : '需要外送服务'}
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        {
           openorderInfo &&
-          <div style={styles.button} className={openorderInfo.openorderItems.find(el => el.confirmFlg === 'N') ? 'bg-brand' : 'bg-grey'}
-            onClick={() => this.doSubmitOpenorder()}>
+          <div style={styles.button} className={(openorderInfo.openorderItems.find(el => el.confirmFlg === 'N') && openorderInfo.openorder.statusFlg !== 'P') ? 'bg-brand' : 'bg-grey'}
+            onClick={() => this.doPressSubmit()}>
             {language === 'en' ? 'CONFIRM ORDER' : '确认点单'}
           </div>
         }
@@ -385,7 +462,56 @@ const styles = ({
     fontFamily: 'varela-round',
     letterSpacing: 2,
     color: 'white',
-  }
+  },
+  groupContainer: {
+    margin: '20px 0px 20px 0px',
+    // backgroundColor: 'pink',
+    // height: 400,
+  },
+  groupTitle: {
+    margin: '20px 0px 0px 20px',
+    fontFamily: 'nunitosans-light',
+    fontSize: 18,
+    color: constants.brand,
+  },
+  groupItems: {
+    // backgroundColor: 'orange',
+    margin: '0px 20px 0px 20px',
+  },
+  groupItem: {
+    display: 'flex',
+    flexDirection: 'row',
+    // backgroundColor: 'purple',
+    margin: '10px 0px 10px 0px',
+    alignItems: 'center',
+  },
+  groupItemLeft: {
+    height: 16,
+    width: 16,
+    marginLeft: 10,
+    marginRight: 10,
+    border: `1px solid ${constants.brand}`,
+  },
+  groupItemLeftNonFixed: {
+    height: 16,
+    width: 16,
+    marginLeft: 40,
+    marginRight: 10,
+    border: `1px solid ${constants.brand}`,
+  },
+  groupItemLeftFixed: {
+    backgroundColor: constants.brand,
+    height: 16,
+    width: 16,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 16,
+    border: `1px solid ${constants.brand}`,
+  },
+  groupItemRight: {
+    fontFamily: 'nunito-regular',
+    fontWeight: 'normal',
+  },
 });
 
 export default Order;
