@@ -71,7 +71,7 @@ class Order extends Component {
     }
 
 
-    if (delivery) {
+    if (delivery && openorderInfo.openorder.homeDelivery === 'Y') {
       this.setState({
         overlayAddressVisible: true,
       })
