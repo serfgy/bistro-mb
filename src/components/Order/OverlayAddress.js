@@ -13,6 +13,7 @@ class OverlayAddress extends Component {
       name: '',
       postalCode: '',
       address: '',
+      verify: false,
     };
   }
 
@@ -43,12 +44,16 @@ class OverlayAddress extends Component {
     const { selectedMenu } = this.props;
     const { phone, name, postalCode, address } = this.state;
 
+    if (!phone || !address) {
+      this.setState({ verify: true });
+      return;
+    }
     this.props.handleUpdateFromOverlayAddress(phone, name, postalCode, address);
   }
 
   render() {
     const { language } = this.props;
-    const { phone, name, postalCode, address } = this.state;
+    const { phone, name, postalCode, address, verify } = this.state;
     // console.log('render overlayaddress', selectedMenu);
 
     return (
@@ -65,21 +70,23 @@ class OverlayAddress extends Component {
               {language === 'en' ? 'Please enter delivery details' : '需要外卖外送，请输入相关信息'}
             </div>
             <div style={styles.groupContainer}>
-              <div style={styles.groupTitle}>{language === 'en' ? 'Phone' : '电话'}</div>
+              <div style={styles.groupTitle}>{language === 'en' ? 'Phone' : '电话'}<span style={{ color: 'red', fontSize: 12 }}>  {language === 'en' ? '*Compulsory' : '*必填'}</span></div>
               <input style={styles.input} type="text" value={phone} onChange={(e) => this.setState({ phone: e.target.value })} />
               <div style={styles.groupTitle}>{language === 'en' ? 'Name' : '名称'}</div>
               <input style={styles.input} type="text" value={name} onChange={(e) => this.setState({ name: e.target.value })} />
               <div style={styles.groupTitle}>{language === 'en' ? 'Postal Code' : '邮编'}</div>
               <input style={styles.input} type="text" value={postalCode} onChange={(e) => this.setState({ postalCode: e.target.value })} />
-              <div style={styles.groupTitle}>{language === 'en' ? 'Address' : '地址'}</div>
+              <div style={styles.groupTitle}>{language === 'en' ? 'Address' : '地址'}<span style={{ color: 'red', fontSize: 12 }}>  {language === 'en' ? '*Compulsory' : '*必填'}</span></div>
               <input style={styles.input} type="text" value={address} onChange={(e) => this.setState({ address: e.target.value })} />
             </div>
 
             <div style={{ height: 30 }}></div>
-
-            {/* <div style={styles.remarksContainer}>
-              {language === 'en' ? '>>> Skip this step' : '>>> 我不需要外送服务'}
-            </div> */}
+            {
+              verify &&
+              <div style={styles.verifyContainer}>
+                {language === 'en' ? '*Please enter compulsory fields' : '*请输入必填信息'}
+              </div>
+            }
             <div style={styles.button} className={'bg-brand'}
               onClick={() => this.doPressSubmit()}>
               {language === 'en' ? 'CONFIRM ADDRESS' : '确认地址'}
@@ -186,6 +193,12 @@ const styles = ({
     fontFamily: 'nunito-light',
     fontSize: 14,
     color: constants.grey4,
+  },
+  verifyContainer: {
+    margin: '10px 20px 10px 20px',
+    fontFamily: 'nunito-light',
+    fontSize: 14,
+    color: 'red',
   },
   containsContainer: {
     marginTop: 10,
