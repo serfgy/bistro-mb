@@ -88,6 +88,8 @@ class Order extends Component {
       openorderRecKey: match.params.openorderRecKey,
       postalCode: postalCode || '',
       addr1: address || '',
+      addr3: name || '',
+      addr4: phone || '',
       deliveryFlg: address ? 'Y' : 'N',
     };
     console.log('post submit-openorder body', body);
