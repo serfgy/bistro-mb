@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Fingerprint2 from 'fingerprintjs2';
 import constants from '../constants/constants';
-import logo from '../images/logo1.png';
-import splash from '../images/splash.jpg';
+import logo from '../images/logo2.png';
+import splash from '../images/splash2.jpg';
 
 class Register extends Component {
   constructor(props) {
@@ -42,31 +42,31 @@ class Register extends Component {
 
     let promiseArray = [];
 
-    let url = 'https://epbrowser.com:8090/fnb-ws/api/foldergrps?orgId=X02';
+    let url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/foldergrps?orgId=11';
     let promiseObject = { url: url, nameString: 'foldergrps' };
     promiseArray.push(promiseObject);
 
-    url = 'https://epbrowser.com:8090/fnb-ws/api/folders?orgId=X02&shopId=X0201'
+    url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/folders?orgId=11&shopId=1102'
     promiseObject = { url: url, nameString: 'folders' };
     promiseArray.push(promiseObject);
 
-    url = 'https://epbrowser.com:8090/fnb-ws/api/menus?orgId=X02';
+    url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/menus?orgId=11';
     promiseObject = { url: url, nameString: 'menus' };
     promiseArray.push(promiseObject);
 
-    url = 'https://epbrowser.com:8090/fnb-ws/api/mods?orgId=X02'
+    url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/mods?orgId=11'
     promiseObject = { url: url, nameString: 'mods' };
     promiseArray.push(promiseObject);
 
-    url = 'https://epbrowser.com:8090/fnb-ws/api/mod-bundles'
+    url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/mod-bundles'
     promiseObject = { url: url, nameString: 'modBundles' };
     promiseArray.push(promiseObject);
 
-    url = 'https://epbrowser.com:8090/fnb-ws/api/combo-items?orgId=X02'
+    url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/combo-items?orgId=11'
     promiseObject = { url: url, nameString: 'comboItems' };
     promiseArray.push(promiseObject);
 
-    url = 'https://epbrowser.com:8090/fnb-ws/api/combo-groups?orgId=X02'
+    url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/combo-groups?orgId=11'
     promiseObject = { url: url, nameString: 'comboGroups' };
     promiseArray.push(promiseObject);
 
@@ -86,9 +86,9 @@ class Register extends Component {
         masters: masters,
       });
     }).then(response => {
-      let url = 'https://epbrowser.com:8090/fnb-ws/api/verify-openorder';
+      let url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/verify-openorder';
       const body = {
-        shopId: 'X0201',
+        shopId: '1102',
         fingerprint: fingerprint,
         orderType: tableId === 'null' ? 'B' : 'A',
         tableId: tableId === 'null' ? '' : tableId,
@@ -125,9 +125,9 @@ class Register extends Component {
 
   doUpdateOpenorder() {
     const { fingerprint, tableId, pax, name } = this.state;
-    let url = 'https://epbrowser.com:8090/fnb-ws/api/update-openorder';
+    let url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/update-openorder';
     const body = {
-      shopId: 'X0201',
+      shopId: '1102',
       tableId: tableId,
       pax: pax,
       vipName: name,

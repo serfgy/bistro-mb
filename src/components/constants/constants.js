@@ -32,7 +32,7 @@ const constants = {
     paid6: 'rgba(232,72,85,0.6)',
     unavailable6: 'rgba(66,69,73,0.6)',
 
-    brand: 'rgb(0,70,31)',
+    brand: 'rgb(0, 0, 153)',
 }
 
 export default constants;

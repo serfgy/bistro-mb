@@ -116,7 +116,7 @@ class OverlayMenu extends Component {
             <div style={styles.title}>{language === 'en' ? selectedMenu.menuName : selectedMenu.menuNameLang}</div>
             <div style={styles.menuPrice}>${selectedMenu.listPrice}</div>
             <div style={styles.imageContainer}>
-              <img alt='' style={styles.image} src={'https://epbrowser.com:8090/gateway/epbm/api/image/stock?stkId=' + selectedMenu.stkId} />
+              <img alt='' style={styles.image} src={'http://203.208.248.200:9090/image-proxy-epbsg/ASP/EPBSG/NORMAL/Shell/picture/' + selectedMenu.stkId+'.jpg'} />
             </div>
             <div style={styles.containsContainer}>
               {

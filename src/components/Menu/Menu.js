@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
 import constants from '../constants/constants';
-import logo from '../images/logo1.png';
+import logo from '../images/logo2.png';
 import BEEF from '../images/beef.png';
 import PORK from '../images/pork.png';
 import VEGAN from '../images/vegan.png';
@@ -36,7 +36,7 @@ class Menu extends Component {
     const { match } = this.props;
     const { foldergrps } = this.state;
     this.doSelectFoldergrp(foldergrps[0]);
-    fetch('https://epbrowser.com:8090/fnb-ws/api/openorders/' + match.params.openorderRecKey)
+    fetch('http://203.208.248.200:9090/fnb-ws-epbsg/api/openorders/' + match.params.openorderRecKey)
       .then(response => response.json())
       .then(response => {
         this.setState({ openorderInfo: response })
@@ -92,7 +92,7 @@ class Menu extends Component {
       return;
     }
 
-    let url = 'https://epbrowser.com:8090/fnb-ws/api/insert-openorder-item/';
+    let url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/insert-openorder-item/';
     const body = {
       openorderRecKey: match.params.openorderRecKey,
       restmenuRecKey: selectedMenu.recKey,
@@ -135,7 +135,7 @@ class Menu extends Component {
       return;
     }
 
-    let url = 'https://epbrowser.com:8090/fnb-ws/api/openorders/' + match.params.openorderRecKey + '/insert-combo';
+    let url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/openorders/' + match.params.openorderRecKey + '/insert-combo';
     const body = {
       openorderRecKey: match.params.openorderRecKey,
       restmenuRecKey: selectedMenu.recKey,
@@ -352,7 +352,7 @@ class Menu extends Component {
                     this.scrollToRef.scrollIntoView()
                     this.doSelectFoldergrp(item);
                   }}>
-                  <img alt='' style={styles.image} src={'https://www.epbrowser.com:8090/image-proxy/ASP/LSTUDIO/NORMAL/Shell/picture/' + item.name + '.jpg'} />
+                  <img alt='' style={styles.image} src={'http://203.208.248.200:9090/image-proxy-epbsg/ASP/EPBSG/NORMAL/Shell/picture/' + item.name + '.jpg'} />
                   <div style={styles.selectionTextFirst}>{item.nameLang}</div>
                   <div style={styles.selectionBetween}>-</div>
                   <div style={styles.selectionTextSecond}>{item.name}</div>
@@ -403,7 +403,7 @@ class Menu extends Component {
                       </div>
                       <div style={styles.menuRight}>
                         <div style={styles.imageContainer}>
-                          <img alt='' style={styles.menuImage} src={'https://epbrowser.com:8090/gateway/epbm/api/image/stock?stkId=' + item.stkId} />
+                          <img alt='' style={styles.menuImage} src={'http://203.208.248.200:9090/image-proxy-epbsg/ASP/EPBSG/NORMAL/Shell/picture/' + item.stkId+'.jpg'} />
                         </div>
                       </div>
                     </div>

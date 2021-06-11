@@ -18,7 +18,7 @@ class Order extends Component {
 
   componentDidMount() {
     const { match } = this.props;
-    fetch('https://epbrowser.com:8090/fnb-ws/api/openorders/' + match.params.openorderRecKey)
+    fetch('http://203.208.248.200:9090/fnb-ws-epbsg/api/openorders/' + match.params.openorderRecKey)
       .then(response => response.json())
       .then(response => {
         this.setState({
@@ -29,7 +29,7 @@ class Order extends Component {
 
   doDeleteOpenorderItem(item) {
     const { match } = this.props;
-    let url = 'https://epbrowser.com:8090/fnb-ws/api/delete-openorder-item/';
+    let url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/delete-openorder-item/';
     const body = {
       openorderRecKey: match.params.openorderRecKey,
       openorderItemRecKey: item.recKey,
@@ -83,7 +83,7 @@ class Order extends Component {
   doSubmitOpenorder(phone, name, postalCode, address) {
     const { match } = this.props;
     const { openorderInfo, delivery } = this.state;
-    let url = 'https://epbrowser.com:8090/fnb-ws/api/submit-openorder';
+    let url = 'http://203.208.248.200:9090/fnb-ws-epbsg/api/submit-openorder';
     const body = {
       openorderRecKey: match.params.openorderRecKey,
       postalCode: postalCode || '',
